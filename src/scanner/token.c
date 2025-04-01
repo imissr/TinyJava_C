@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "token.h"
+//#include "../include/token.h"
 
 // Token-Klassen als Konstanten definieren
 

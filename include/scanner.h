@@ -3,33 +3,32 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
-#include "linkedlist.h"
 #include "token.h"
+#include "hashtable.h"
 #include "input.h"
 #include "output.h"
 
-#define HASH_SIZE 50
-
-// Struktur für den Scanner
 typedef struct {
-    Input *in;
-    Output *out;
-    int line;
-    int column;
-    int isDebug;
-    char ch;
-    Token *token;
-    Hashtable *keywords;
+    Input *input;         // Source file
+    Output *output;       // Output file
+    int line;            // Current line number
+    int column;          // Current column number
+    int isDebug;         // Debug mode
+    Token *token;         // Current token
+    char ch;             // Current character
+    Hashtable *keywords; // Hash table for keywords
 } Scanner;
 
-// Funktion zur Erstellung eines Scanners
-Scanner *create_scanner(Input *in, Output *out, int debug);
+// Function declarations
+Scanner *create_scanner(const char *filename, int debug);
 void reserve_keywords(Scanner *scanner);
 Token *scan_symbol(Scanner *scanner);
-void sift_symbols(Scanner *scanner);
 char get_symbol(Scanner *scanner);
-int check_int_range(Scanner *scanner, const char *num);
+void sift_symbols(Scanner *scanner);
+int check_int_range(const char *s);
+char peek(Scanner *scanner);
 void free_scanner(Scanner *scanner);
 
-#endif // SCANNER_H
+#endif

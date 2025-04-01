@@ -65,7 +65,6 @@ char input_next(Input* input) {
     if (!input || !input->file) return EOF;
     input->last = input->ch;
     input->ch = fgetc(input->file);
-    printf("Read character: %c\n", (char)input->ch);
     return (char)input->ch;
 }
 
@@ -73,7 +72,6 @@ char input_peek(Input* input) {
     if (!input || !input->file) return EOF;
     int ch = fgetc(input->file);
     if (ch != EOF) ungetc(ch, input->file);
-    printf("Peeked character: %c\n", (char)ch);
     return (char)ch;
 }
 
