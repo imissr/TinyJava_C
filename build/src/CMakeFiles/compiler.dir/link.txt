@@ -1,1 +1,0 @@
-/usr/bin/cc CMakeFiles/compiler.dir/main.c.o -o compiler  scanner/libscanner.a datastruktur/libdatastruktur.a tools/libtools.a datastruktur/libdatastruktur.a 

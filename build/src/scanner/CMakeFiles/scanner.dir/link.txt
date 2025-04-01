@@ -1,2 +1,0 @@
-/usr/bin/ar qc libscanner.a CMakeFiles/scanner.dir/scanner.c.o CMakeFiles/scanner.dir/token.c.o
-/usr/bin/ranlib libscanner.a
