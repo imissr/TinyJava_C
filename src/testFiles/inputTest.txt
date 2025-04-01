@@ -1,0 +1,41 @@
+/*#include "input.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+void create_test_file(const char* filename) {
+    FILE* file = fopen(filename, "w");
+    if (!file) {
+        perror("Failed to create test file");
+        exit(EXIT_FAILURE);
+    }
+    fprintf(file, "Hello, World!");
+    fclose(file);
+}
+
+int main() {
+    const char* test_file = "testfile.txt";
+    create_test_file(test_file);
+    
+    Input* input = input_init(test_file);
+    if (!input) {
+        fprintf(stderr, "Failed to initialize input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Reading characters with input_next():\n");
+    for (int i = 0; i < 5; i++) {
+        printf("Read character: %c\n", input_next(input));
+    }
+    
+    printf("Testing input_peek():\n");
+    char peeked = input_peek(input);
+    printf("Peeked character: %c\n", peeked);
+    
+    printf("Testing input_last():\n");
+    char last = input_last(input);
+    printf("Last character: %c\n", last);
+    
+    input_close(input);
+    
+    return EXIT_SUCCESS;
+}*/
