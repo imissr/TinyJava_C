@@ -1,0 +1,14 @@
+/home/imissoldgaren/tinyjava/build/CMakeFiles/edit_cache.dir
+/home/imissoldgaren/tinyjava/build/CMakeFiles/rebuild_cache.dir
+/home/imissoldgaren/tinyjava/build/src/CMakeFiles/compiler.dir
+/home/imissoldgaren/tinyjava/build/src/CMakeFiles/edit_cache.dir
+/home/imissoldgaren/tinyjava/build/src/CMakeFiles/rebuild_cache.dir
+/home/imissoldgaren/tinyjava/build/src/scanner/CMakeFiles/scanner.dir
+/home/imissoldgaren/tinyjava/build/src/scanner/CMakeFiles/edit_cache.dir
+/home/imissoldgaren/tinyjava/build/src/scanner/CMakeFiles/rebuild_cache.dir
+/home/imissoldgaren/tinyjava/build/src/datastruktur/CMakeFiles/datastruktur.dir
+/home/imissoldgaren/tinyjava/build/src/datastruktur/CMakeFiles/edit_cache.dir
+/home/imissoldgaren/tinyjava/build/src/datastruktur/CMakeFiles/rebuild_cache.dir
+/home/imissoldgaren/tinyjava/build/src/tools/CMakeFiles/tools.dir
+/home/imissoldgaren/tinyjava/build/src/tools/CMakeFiles/edit_cache.dir
+/home/imissoldgaren/tinyjava/build/src/tools/CMakeFiles/rebuild_cache.dir

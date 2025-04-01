@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdatastruktur.a CMakeFiles/datastruktur.dir/hashtable.c.o CMakeFiles/datastruktur.dir/linkedlist.c.o
+/usr/bin/ranlib libdatastruktur.a
