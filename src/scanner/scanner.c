@@ -7,32 +7,15 @@
 #include "input.h"
 #include "scanner.h"
 
-//tested the first part without the default case : 
-/*#include <stdio.h>
-#include <stdlib.h>
-#include "scanner.h"
-#include "token.c"
-
-void create_test_file(const char *filename) {
-    FILE *file = fopen(filename, "w");
-    if (!file) {
-        perror("Fehler beim Erstellen der Testdatei");
-        exit(EXIT_FAILURE);
-    }
-
-    // Testsymbole in die Datei schreiben
-    fprintf(file, "( ) { } + - * / = == < <= > >= ! != ; , .");
-    fclose(file);
-}
-
+/*
 int main() {
-    const char *test_filename = "test_input.txt";
+    const char *test_filename = "/home/imissoldgaren/tinyjava/src/test.txt";
 
     printf("Creating test file...\n");
-    create_test_file(test_filename);
+    //create_test_file(test_filename);
 
     printf("Initializing scanner...\n");
-    Scanner *scanner = create_scanner(test_filename, 1);
+    Scanner *scanner = create_scanner(test_filename, 0);
     if (!scanner) {
         fprintf(stderr, "Fehler beim Erstellen des Scanners\n");
         return EXIT_FAILURE;
@@ -43,13 +26,22 @@ int main() {
 
     // Token-Loop
     Token *token = NULL;
-    while ((token = scan_symbol(scanner)) && token->symbol != EOF_TOKEN) {
-       // printf("Scanned token at line %d, col %d\n", token->line, token->column);
-       // print_token(token);
-    }
-
+    do {
+        token = scan_symbol(scanner);
+    
+        if (token == NULL) {
+            fprintf(stderr, "Error: scan_symbol returned NULL\n");
+            break;  
+        }
+        print_token(token);
+    
+    } while (token->symbol != EOF_TOKEN);
+    
+    output_printErrorReport(scanner->output);
     printf("Final Token: ");
     print_token(token);
+
+    
 
     // EOF-Token freigeben
     if (token) {
@@ -61,8 +53,8 @@ int main() {
     printf("Scanner freed successfully!\n");
 
     return 0;
-}*/
-
+}
+*/
 
 
 
@@ -114,25 +106,19 @@ Token *scan_symbol(Scanner *scanner) {
         fprintf(stderr, "Error: scanner is NULL in scan_symbol()\n");
         exit(EXIT_FAILURE);
     }
-
+    
     sift_symbols(scanner);
 
-    // Prüfe, ob `scanner->token` gültig ist, bevor es freigegeben wird!
-    if (scanner->token != NULL) {
-        //printf("Freeing previous token at %p\n", (void *)scanner->token);
-        free_token(&scanner->token);
-        scanner->token = NULL; 
-    }
 
       if (scanner->ch == EOF || scanner->ch == -1) {
+
         printf("End of file reached!\n");
         return create_token(EOF_TOKEN, scanner->line, scanner->column, "EOF", 0, NULL);
     }
 
- 
 
-    //printf("Scanning character: '%c'\n", scanner->ch);
     switch (scanner->ch) {
+     
         case '(': scanner->token = create_token(SYM_LEFT_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
         case ')': scanner->token = create_token(SYM_RIGHT_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
         case '{': scanner->token = create_token(SYM_LEFT_CURVED_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
@@ -193,38 +179,28 @@ Token *scan_symbol(Scanner *scanner) {
                 break;
             } else {
                 output_add_lexical_error(scanner->output, scanner->line, scanner->column, "Expected '=' after '!'");
-                //output_printLexicalErrorReport(scanner->output);
-                //  Zeichen überspringen, um weiterzulesen!
-                //get_symbol(scanner);
-        
-                //  Dummy-Token erstellen, um Schleife nicht zu stoppen
-               // scanner->token = create_token(SYM_ID, scanner->line, scanner->column, "UNKNOWN", 0, NULL);
             }
             get_symbol(scanner);
             break;
 
         case EOF:
+            printf("Hi im here\n");
             scanner->token = create_token(EOF_TOKEN, scanner->line, scanner->column, "EOF", 0, NULL);
             break;
 
         default:
+        if (isalpha(scanner->ch)) { 
         
-        if (isalpha(scanner->ch)) {
-            printf("hi");
-              // Handle identifiers and keywords
-            char id[256] = {0};  // Buffer for identifier
-            int idLen = 0;
-                
-            id[idLen++] = scanner->ch;
-         
-                
-            while (isalnum(get_symbol(scanner)) && idLen < 256 - 1) {
-                id[idLen++] = scanner->ch;
-            }
+            char id[256] = {0};  
+            int i = 0;
+        
+            do {
+                id[i++] = scanner->ch;
+                get_symbol(scanner);
+            } while (isalnum(scanner->ch));
+        
+            id[i] = '\0'; 
 
-            id[idLen] = '\0';  // Null terminate the string
-    
-            // Check if it's a keyword
             int keyword_type = lookup_hashtable(scanner->keywords, id);
             if (keyword_type != -1) {
                 scanner->token = create_token(keyword_type, scanner->line, scanner->column, "KEYWORD", 0, NULL);
@@ -232,8 +208,8 @@ Token *scan_symbol(Scanner *scanner) {
                 scanner->token = create_token(SYM_ID, scanner->line, scanner->column, "IDENTIFIER", 0, id);
             }
         }
-        else if (isdigit(scanner->ch)) {  // Handle numbers
-            char num[256] = {0};  // Buffer for number
+        else if (isdigit(scanner->ch)) {  
+            char num[256] = {0};  
             int i = 0;
             
             do {
@@ -249,11 +225,11 @@ Token *scan_symbol(Scanner *scanner) {
             scanner->token = create_token(SYM_NUMBER, scanner->line, scanner->column, "NUMBER", atoi(num), NULL);
         }
         else {  // Handle unknown characters
-
-            output_add_lexical_error(scanner->output, scanner->line, scanner->column, 
-                "unknown char '%c' found");
-            printf("%c",scanner->ch);
-            get_symbol(scanner);
+       
+            char msg[64];
+            snprintf(msg, sizeof(msg), "unknown char '%c' found", scanner->ch);
+            output_add_lexical_error(scanner->output, scanner->line, scanner->column, msg);
+            get_symbol(scanner);  // Skip to next character
         }
         break;
     }

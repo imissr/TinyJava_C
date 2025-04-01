@@ -3,17 +3,7 @@
 #include "scanner.h"
 #include "token.c"
 
-void create_test_file(const char *filename) {
-    FILE *file = fopen(filename, "w");
-    if (!file) {
-        perror("Fehler beim Erstellen der Testdatei");
-        exit(EXIT_FAILURE);
-    }
 
-    // Testsymbole in die Datei schreiben
-    fprintf(file, "( ) { } + - * / = == < <= > >= ! != ; , .");
-    fclose(file);
-}
 
 int main() {
     const char *test_filename = "/home/imissoldgaren/tinyjava/src/test.txt";
@@ -22,7 +12,7 @@ int main() {
     //create_test_file(test_filename);
 
     printf("Initializing scanner...\n");
-    Scanner *scanner = create_scanner(test_filename, 1);
+    Scanner *scanner = create_scanner(test_filename, 0);
     if (!scanner) {
         fprintf(stderr, "Fehler beim Erstellen des Scanners\n");
         return EXIT_FAILURE;
@@ -33,10 +23,16 @@ int main() {
 
     // Token-Loop
     Token *token = NULL;
-    do{
+    do {
         token = scan_symbol(scanner);
-       
-    }while (token->symbol != EOF_TOKEN);
+    
+        if (token == NULL) {
+            fprintf(stderr, "Error: scan_symbol returned NULL\n");
+            break;  
+        }
+        print_token(token);
+    
+    } while (token->symbol != EOF_TOKEN);
     
     output_printErrorReport(scanner->output);
     printf("Final Token: ");
