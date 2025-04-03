@@ -6,7 +6,7 @@
 
 
 int main() {
-    const char *test_filename = "/home/imissoldgaren/GIT_Project/TinyJava_C/src/testScanner.txt";
+    const char *test_filename = "/home/mohamad-khaled-minawe/Desktop/project/TinyJava_C/src/testFiles/testScanner.txt";
 
     printf("Creating test file...\n");
     //create_test_file(test_filename);
