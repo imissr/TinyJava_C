@@ -1,53 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scanner.h"
-#include "token.c"
+#include "type.h"
 
 
 
 int main() {
-    const char *test_filename = "/home/mohamad-khaled-minawe/Desktop/project/TinyJava_C/src/testFiles/testScanner.txt";
+    Type *t1 = initType(TYPE_INT);
+    Type *t2 = initTypeFull(TYPE_CLASS, NOTYPE, "MyClass");
 
-    printf("Creating test file...\n");
-    //create_test_file(test_filename);
+    char buffer[256];
+    typeToString(t1, buffer, sizeof(buffer));
+    printf("Type 1:\n%s\n", buffer);
 
-    printf("Initializing scanner...\n");
-    Scanner *scanner = create_scanner(test_filename, 0);
-    if (!scanner) {
-        fprintf(stderr, "Fehler beim Erstellen des Scanners\n");
-        return EXIT_FAILURE;
-    }
+    typeToString(t2, buffer, sizeof(buffer));
+    printf("Type 2:\n%s\n", buffer);
 
-    printf("Scanner initialized successfully!\n");
-    printf("Scanning symbols from test file:\n");
-
-    // Token-Loop
-    Token *token = NULL;
-    do {
-        token = scan_symbol(scanner);
-    
-        if (token == NULL) {
-            fprintf(stderr, "Error: scan_symbol returned NULL\n");
-            break;  
-        }
-        print_token(token);
-    
-    } while (token->symbol != EOF_TOKEN);
-    
-    output_printErrorReport(scanner->output);
-    printf("Final Token: ");
-    print_token(token);
-
-    
-
-    // EOF-Token freigeben
-    if (token) {
-        free_token(&token);
-    }
-
-    printf("Freeing scanner...\n");
-    free_scanner(scanner);
-    printf("Scanner freed successfully!\n");
+    printf("Types equal? %s\n", equalsType(t1, t2) ? "Yes" : "No");
 
     return 0;
 }

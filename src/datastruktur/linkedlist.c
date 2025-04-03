@@ -83,3 +83,5 @@ void linkedlist_print(LinkedList* list, void (*print_func)(void*)) {
     }
     printf("\n");
 }
+
+

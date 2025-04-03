@@ -41,4 +41,5 @@ void linkedlist_free(LinkedList* list, void (*free_func)(void*));
 // Druckt die Liste (erfordert eine Druckfunktion für die Daten)
 void linkedlist_print(LinkedList* list, void (*print_func)(void*));
 
+
 #endif

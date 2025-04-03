@@ -1,4 +1,7 @@
-add_library(parser parser.c type.c)
-target_include_directories(parser PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
+add_library(parser type.c  type.c)
+
+
+target_link_libraries(parser scanner datastruktur tools)
 
 target_include_directories(parser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
