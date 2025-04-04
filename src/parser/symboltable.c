@@ -106,3 +106,21 @@ const char* symbolTableToString(SymbolTable* table, char* buffer, int bufSize) {
     snprintf(buffer, bufSize, "Table %d", table->no - 10000);
     return buffer;
 }
+
+void freeSymbolTable(SymbolTable *table, void (*free_item)(Item *)) {
+    if (!table)
+        return;
+
+    Item *current = table->head;
+    while (current) {
+        Item *next = current->next;
+        if (free_item) {
+            free_item(current);
+        } else {
+            free(current); // falls kein spezieller Freigabe-Code notwendig
+        }
+        current = next;
+    }
+
+    free(table);
+}

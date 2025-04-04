@@ -1,7 +1,7 @@
 
 #include "constantPoolItem.h"
 //tested
-/*
+/* zero memory leaks
 int main() {
     printf("=== ConstantPoolItem Testing ===\n");
 

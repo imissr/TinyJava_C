@@ -174,6 +174,12 @@ void freeItem(Item *item)
         item->objectType = NULL;
     }
 
+    if (item->fields)
+    {
+        freeSymbolTable(item->fields , freeItem);
+        item->fields = NULL;
+    }
+
     // Free the item itself
     free(item);
 }

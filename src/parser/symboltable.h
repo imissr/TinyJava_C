@@ -33,4 +33,6 @@ Item *getParentMethod(SymbolTable *table);
 
 const char *symbolTableToString(SymbolTable *table, char *buffer, int bufSize);
 
+void freeSymbolTable(SymbolTable *table, void (*free_item)(Item *));
+
 #endif
