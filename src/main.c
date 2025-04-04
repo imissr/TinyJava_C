@@ -1,22 +1,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scanner.h"
-#include "type.h"
+#include "constantPoolItem.h"
+
+
 
 
 
 int main() {
-    Type *t1 = initType(TYPE_INT);
-    Type *t2 = initTypeFull(TYPE_CLASS, NOTYPE, "MyClass");
+    printf("=== ConstantPoolItem Testing ===\n");
 
-    char buffer[256];
-    typeToString(t1, buffer, sizeof(buffer));
-    printf("Type 1:\n%s\n", buffer);
+    // UTF8 test
+    const char* utf8str = "hello";
+    ConstantPoolItem* utf8Item = create_constant_utf8(CONSTANT_UTF8, (const uint8_t*)utf8str, strlen(utf8str));
+    printf("UTF8 entry size: %d\n", byte_stream_size(utf8Item));
 
-    typeToString(t2, buffer, sizeof(buffer));
-    printf("Type 2:\n%s\n", buffer);
+    // Integer test
+    ConstantPoolItem* intItem = create_constant_integer(CONSTANT_INTEGER, 123456);
+    printf("Integer entry size: %d\n", byte_stream_size(intItem));
 
-    printf("Types equal? %s\n", equalsType(t1, t2) ? "Yes" : "No");
+    // Class test
+    ConstantPoolItem* classItem = create_constant_class(CONSTANT_CLASS, 2);
+    printf("Class entry size: %d\n", byte_stream_size(classItem));
 
+    // Method ref test
+    ConstantPoolItem* methodRefItem = create_constant_ref(CONSTANT_METHOD_REF, 5, 10);
+    printf("MethodRef entry size: %d\n", byte_stream_size(methodRefItem));
+
+    // Name and type descriptor test
+    ConstantPoolItem* nameTypeItem = create_constant_ref(CONSTANT_NAME_TYPE_DESCRIPTOR, 7, 8);
+    printf("NameTypeDescriptor entry size: %d\n", byte_stream_size(nameTypeItem));
+
+    // Clean up
+    free_constant_pool_item(utf8Item);
+    free_constant_pool_item(intItem);
+    free_constant_pool_item(classItem);
+    free_constant_pool_item(methodRefItem);
+    free_constant_pool_item(nameTypeItem);
+
+    printf("=== Done ===\n");
     return 0;
 }
