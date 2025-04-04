@@ -76,6 +76,7 @@ Node *concatNodes(Node *first, Node *second);
 
 void deleteNode(Node *node);
 
+Node* deleteNodeFromChain(Node *node);
 
 void nodeToString(const Node *node, char *buffer, size_t bufferSize);
 
@@ -87,5 +88,7 @@ bool returnMethodVisitor(const Node* node);
 
 
 void freeNode(Node *node);
+
+void freeNodeRecursive(Node *node);
 
 #endif 

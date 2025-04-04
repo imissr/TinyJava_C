@@ -274,24 +274,25 @@ void deleteNode(Node *node)
 
     if (node->prev == NULL || node->prev->nodeClass == NOCLASS)
     {
+        // Node is the first in a chain
         if (node->next == NULL)
         {
+            // It’s a standalone node
             if (node->parent)
-            {
                 node->parent->right = NULL;
-            }
         }
         else
         {
+            // Replace this node with its next sibling
             if (node->parent)
-            {
                 node->parent->right = node->next;
-                node->next->parent = node->parent;
-            }
+
+            node->next->parent = node->parent;
         }
     }
     else
     {
+        // Node is not the first in a chain
         if (node->next == NULL)
         {
             node->prev->next = NULL;
@@ -302,6 +303,40 @@ void deleteNode(Node *node)
             node->next->prev = node->prev;
         }
     }
+
+    // Detach the node from the AST
+    node->prev = NULL;
+    node->next = NULL;
+    node->parent = NULL;
+}
+
+
+Node* deleteNodeFromChain(Node *node) {
+    if (!node) return NULL;
+
+    if (!node->prev || node->prev->nodeClass == NOCLASS) {
+        if (node->parent && node->parent->right == node)
+            node->parent->right = node->next;
+        if (node->next)
+            node->next->parent = node->parent;
+        if (node->next)
+            node->next->prev = NULL;
+
+        Node *next = node->next;
+        node->next = NULL;
+        node->parent = NULL;
+        return next;  // This is your new root
+    }
+
+    if (node->prev)
+        node->prev->next = node->next;
+    if (node->next)
+        node->next->prev = node->prev;
+
+    node->prev = NULL;
+    node->next = NULL;
+    node->parent = NULL;
+    return NULL;
 }
 
 bool typeVisitor(const Node *node)
@@ -549,34 +584,70 @@ void nodeToString(const Node *node, char *buffer, size_t bufferSize)
     }
 }
 
-void freeNode(Node* node) {
-    if (!node) return;
-    
-    // Break circular references
-    if (node->next) {
-        node->next->prev = NULL;
-        node->next = NULL;
-    }
-    if (node->prev) {
-        node->prev->next = NULL;
-        node->prev = NULL;
-    }
-    
-    // Clear parent/child relationships
-    if (node->left) {
-        node->left->parent = NULL;
+void freeNode(Node *node)
+{
+    if (!node)
+        return;
+
+    if (node->left)
+    {
+        freeNode(node->left);
         node->left = NULL;
     }
-    if (node->right) {
-        node->right->parent = NULL;
+
+    if (node->right)
+    {
+        freeNode(node->right);
         node->right = NULL;
     }
-    if (node->parent) {
-        node->parent = NULL;
+
+    if (node->next)
+    {
+        freeNode(node->next);
+        node->next = NULL;
     }
-    
-    // Don't free nodeObject here - it's managed separately
+
+    // Parent & Prev NICHT freigeben (kein Ownership)
+    node->parent = NULL;
+    node->prev = NULL;
+
+    // nodeObject wird extern verwaltet → nicht freigeben
     node->nodeObject = NULL;
-    
+
+    free(node); // Achtung: nodeObject wird separat verwaltet!
+}
+
+void freeNodeRecursive(Node *node)
+{
+    if (!node)
+        return;
+
+    if (node->left)
+    {
+        freeNodeRecursive(node->left);
+        node->left = NULL;
+    }
+
+    if (node->right)
+    {
+        freeNodeRecursive(node->right);
+        node->right = NULL;
+    }
+
+    if (node->next)
+    {
+        freeNodeRecursive(node->next);
+        node->next = NULL;
+    }
+
+    if (node->nodeObject)
+    {
+        freeItem(node->nodeObject); // 💥 jetzt wird das Item gleich mit freigegeben
+        node->nodeObject = NULL;
+    }
+
+    node->parent = NULL;
+    node->prev = NULL;
+
     free(node);
 }
