@@ -1,6 +1,48 @@
 #include "node.h"
 #include <stdlib.h>
 
+/*
+tested the tostring method
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "node.h"
+#include "item.h"
+#include "type.h"
+
+
+
+int main() {
+    // Initialisiere einen Typ
+    Type* t = initType(TYPE_INT);
+
+    // Erzeuge ein Item
+    Item* item = createItemFull("myConst", KIND_VAR, NOSUBKIND, t, 0, 0, NULL);
+
+    // Erzeuge einen Node
+    Node* node = createNodeWithConst(CLASS_CONST, NOSUBCLASS, item, NULL, NULL, NULL, NULL, 42);
+
+    // String-Puffer für Ausgabe
+    char buffer[256];
+    nodeToString(node, buffer, sizeof(buffer));
+
+    // Ausgabe
+    printf("Node:\n%s\n", buffer);
+
+    // Speicher freigeben
+    if (item) {
+        freeItem(item);  // Free item first
+        item = NULL;
+    }
+    
+    if (node) {
+        freeNode(node);  // Then free node
+        node = NULL;
+    }
+    return 0;
+}
+*/
+
 static int globalNodeCounter = 0;
 
 
@@ -67,6 +109,64 @@ Node* createNodeWithConst(int kind, int subkind, Item* object, Node* l, Node* r,
 }
 
 
+
+
+
+
+void attachNode(Node* base, Node* node) {
+    if (!base || !node) return;
+    
+    if (base->next == NULL) {
+        base->next = node;
+        node->prev = base;
+    } else {
+        Node* temp = base->next;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = node;
+        node->prev = temp;
+    }
+}
+
+
+Node* concatNodes(Node* first, Node* second) {
+    if (!first) return second;
+    if (!second) return first;
+    
+    Node* temp = first;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = second;
+    return first;
+}
+
+void deleteNode(Node* node) {
+    if (!node) return;
+
+    if (node->prev == NULL || node->prev->nodeClass == NOCLASS) {
+        if (node->next == NULL) {
+            if (node->parent) {
+                node->parent->right = NULL;
+            }
+        } else {
+            if (node->parent) {
+                node->parent->right = node->next;
+                node->next->parent = node->parent;
+            }
+        }
+    } else {
+        if (node->next == NULL) {
+            node->prev->next = NULL;
+        } else {
+            node->prev->next = node->next;
+            node->next->prev = node->prev;
+        }
+    }
+}
+
+
 void nodeToString(const Node* node, char* buffer, size_t bufferSize) {
     if (!node || !buffer || bufferSize == 0) {
         if (buffer && bufferSize > 0) buffer[0] = '\0';
@@ -129,6 +229,7 @@ void nodeToString(const Node* node, char* buffer, size_t bufferSize) {
         }
     }
 }
+
 
 void freeNode(Node* node) {
     if (!node) return;
