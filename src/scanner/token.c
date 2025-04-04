@@ -4,6 +4,7 @@
 #include <string.h>
 #include "token.h"
 // #include "../include/token.h"
+//zero leaks
 
 // Token-Klassen als Konstanten definieren
 

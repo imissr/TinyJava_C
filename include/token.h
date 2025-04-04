@@ -54,6 +54,6 @@ extern const int EOF_TOKEN;
 
 Token *create_token(int symbol, int line, int column, const char *type, int intValue, const char *identifier);
 void print_token( Token *token);
-void free_token(Token **token);
+void free_token(Token *token);
 
 #endif // TOKEN_H

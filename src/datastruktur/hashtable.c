@@ -1,5 +1,5 @@
 #include "hashtable.h"
-
+// zero memory leaks
 // Erstelle eine neue Hash-Tabelle
 Hashtable *create_hashtable() {
     Hashtable *ht = (Hashtable *)malloc(sizeof(Hashtable));

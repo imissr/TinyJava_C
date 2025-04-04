@@ -1,5 +1,5 @@
 #include "linkedlist.h"
-
+//zero memory leaks
 // Erstellt eine neue leere verkettete Liste
 LinkedList* linkedlist_create() {
     LinkedList* list = (LinkedList*)malloc(sizeof(LinkedList));
