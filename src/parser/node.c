@@ -583,7 +583,7 @@ void nodeToString(const Node *node, char *buffer, size_t bufferSize)
         }
     }
 }
-
+//doesnt free item its only free the node 
 void freeNode(Node *node)
 {
     if (!node)
@@ -617,6 +617,8 @@ void freeNode(Node *node)
     free(node); // Achtung: nodeObject wird separat verwaltet!
 }
 
+
+//free node with item
 void freeNodeRecursive(Node *node)
 {
     if (!node)
@@ -642,7 +644,7 @@ void freeNodeRecursive(Node *node)
 
     if (node->nodeObject)
     {
-        freeItem(node->nodeObject); // 💥 jetzt wird das Item gleich mit freigegeben
+        freeItem(node->nodeObject); 
         node->nodeObject = NULL;
     }
 
