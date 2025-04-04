@@ -25,9 +25,9 @@ void test_node_functionality()
     attachNode(node1, node1b);
 
     // Delete node1 and update the chain root!
-    Node *node1Chain = deleteNodeFromChain(node1); // node1Chain now points to node1b
-    freeNode(node1);       //if you use this you need to free items        // Now we can safely delete node1
-    freeItem(item1); // Free item1                 
+    //Node *node1Chain = deleteNodeFromChain(node1); // node1Chain now points to node1b
+    deleteNode(node1); // This will delete node1 but not node1b
+          
 
     // Step 4: Build node2 → node2b
     Node *node2 = createNodeWithConst(CLASS_CONST, NOSUBCLASS, item3, NULL, NULL, NULL, NULL, 200);
@@ -35,7 +35,7 @@ void test_node_functionality()
     attachNode(node2, node2b);
 
     // Step 5: Concat the updated node1 chain (node1b) with node2 chain
-    Node *fullChain = concatNodes(node1Chain, node2); // node1b → node2 → node2b
+    Node *fullChain = concatNodes(node1b, node2); // node1b → node2 → node2b
 
     // Step 5: Print all nodes in the chain
     char buf[256];
@@ -51,6 +51,7 @@ void test_node_functionality()
 
     // Step 6: Clean up everything
     freeNodeRecursive(fullChain);
+
     freeType(type);
     printf("✅ concatNodes test completed and memory freed.\n");
 }

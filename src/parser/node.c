@@ -267,7 +267,7 @@ Node *concatNodes(Node *first, Node *second)
     return first;
 }
 
-void deleteNode(Node *node)
+/*void deleteNode(Node *node)
 {
     if (!node)
         return;
@@ -308,10 +308,36 @@ void deleteNode(Node *node)
     node->prev = NULL;
     node->next = NULL;
     node->parent = NULL;
+}*/
+
+void deleteNode(Node* node) {
+    if (!node) return;
+    if (!node->prev || node->prev->nodeClass == NOCLASS) {
+        if (!node->next) {
+            if (node->parent) node->parent->right = NULL;
+        } else {
+            if (node->parent) {
+                node->parent->right = node->next;
+                node->next->parent = node->parent;
+            }
+        }
+    } else {
+        if (!node->next) {
+            node->prev->next = NULL;
+        } else {
+            node->prev->next = node->next;
+            node->next->prev = node->prev;
+        }
+    }
+    freeItem(node->nodeObject); //need to free data after deleation
+    free(node);
+    
+
 }
 
 
-Node* deleteNodeFromChain(Node *node) {
+//in case we need it 
+/*Node* deleteNodeFromChain(Node *node) {
     if (!node) return NULL;
 
     if (!node->prev || node->prev->nodeClass == NOCLASS) {
@@ -337,7 +363,7 @@ Node* deleteNodeFromChain(Node *node) {
     node->next = NULL;
     node->parent = NULL;
     return NULL;
-}
+}*/
 
 bool typeVisitor(const Node *node)
 {
