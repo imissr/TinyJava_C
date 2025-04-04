@@ -19,7 +19,7 @@ int main() {
 
     return 0;
 }*/
-const char* types[] = { "NOTYPE", "INT", "BOOLEAN", "VOID", "ARRAY", "CLASS" };
+
 
 Type* initType(int type) {
     return initTypeFull(type, NOTYPE, "");
@@ -38,6 +38,15 @@ Type* initTypeFull(int type, int arrayType, const char* classType) {
     t->arrayType = arrayType;
     strncpy(t->classType, classType ? classType : "", MAX_CLASS_NAME_LENGTH - 1);
     t->classType[MAX_CLASS_NAME_LENGTH - 1] = '\0';
+
+    t->types[0] = "NOTYPE";
+    t->types[1] = "INT";
+    t->types[2] = "BOOLEAN";
+    t->types[3] = "VOID";
+    t->types[4] = "ARRAY";
+    t->types[5] = "CLASS";
+
+
     return t;
 }
 
@@ -60,9 +69,9 @@ void typeToString(const Type* t, char* buffer, int bufferSize) {
     if (!t || !buffer || bufferSize <= 0) return;
     
     snprintf(buffer, bufferSize, "%s\n%s",
-             types[t->basicType],
+             t->types[t->basicType],
              (t->basicType == TYPE_CLASS) ? t->classType :
-             (t->basicType == TYPE_ARRAY) ? types[t->arrayType] : "-");
+             (t->basicType == TYPE_ARRAY) ? t->types[t->arrayType] : "-");
 }
 
 void freeType(Type* t) {

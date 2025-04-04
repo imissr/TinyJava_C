@@ -1,43 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "scanner.h"
-#include "constantPoolItem.h"
-
-
+#include <string.h>
+#include "node.h"
+#include "item.h"
+#include "type.h"
 
 
 
 int main() {
-    printf("=== ConstantPoolItem Testing ===\n");
+    // Initialisiere einen Typ
+    Type* t = initType(TYPE_INT);
 
-    // UTF8 test
-    const char* utf8str = "hello";
-    ConstantPoolItem* utf8Item = create_constant_utf8(CONSTANT_UTF8, (const uint8_t*)utf8str, strlen(utf8str));
-    printf("UTF8 entry size: %d\n", byte_stream_size(utf8Item));
+    // Erzeuge ein Item
+    Item* item = createItemFull("myConst", KIND_VAR, NOSUBKIND, t, 0, 0, NULL);
 
-    // Integer test
-    ConstantPoolItem* intItem = create_constant_integer(CONSTANT_INTEGER, 123456);
-    printf("Integer entry size: %d\n", byte_stream_size(intItem));
+    // Erzeuge einen Node
+    Node* node = createNodeWithConst(CLASS_CONST, NOSUBCLASS, item, NULL, NULL, NULL, NULL, 42);
 
-    // Class test
-    ConstantPoolItem* classItem = create_constant_class(CONSTANT_CLASS, 2);
-    printf("Class entry size: %d\n", byte_stream_size(classItem));
+    // String-Puffer für Ausgabe
+    char buffer[256];
+    nodeToString(node, buffer, sizeof(buffer));
 
-    // Method ref test
-    ConstantPoolItem* methodRefItem = create_constant_ref(CONSTANT_METHOD_REF, 5, 10);
-    printf("MethodRef entry size: %d\n", byte_stream_size(methodRefItem));
+    // Ausgabe
+    printf("Node:\n%s\n", buffer);
 
-    // Name and type descriptor test
-    ConstantPoolItem* nameTypeItem = create_constant_ref(CONSTANT_NAME_TYPE_DESCRIPTOR, 7, 8);
-    printf("NameTypeDescriptor entry size: %d\n", byte_stream_size(nameTypeItem));
-
-    // Clean up
-    free_constant_pool_item(utf8Item);
-    free_constant_pool_item(intItem);
-    free_constant_pool_item(classItem);
-    free_constant_pool_item(methodRefItem);
-    free_constant_pool_item(nameTypeItem);
-
-    printf("=== Done ===\n");
+    // Speicher freigeben
+    if (item) {
+        freeItem(item);  // Free item first
+        item = NULL;
+    }
+    
+    if (node) {
+        freeNode(node);  // Then free node
+        node = NULL;
+    }
     return 0;
 }

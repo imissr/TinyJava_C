@@ -1,6 +1,6 @@
 
 #include "constantPoolItem.h"
-
+//tested
 /*
 int main() {
     printf("=== ConstantPoolItem Testing ===\n");
@@ -104,7 +104,7 @@ int byte_stream_size(const ConstantPoolItem* item) {
     }
 }
 
-// Speicherfreigabe
+
 void free_constant_pool_item(ConstantPoolItem* item) {
     if (item != NULL) {
         if (item->itemTag == CONSTANT_UTF8 && item->itemBytes != NULL) {

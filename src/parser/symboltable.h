@@ -1,14 +1,17 @@
 #ifndef SYMBOLTABLE_H
 #define SYMBOLTABLE_H
 
-#include "item.h"
 #include "linkedlist.h"
+
+// Forward declaration of Item
+struct Item;
+typedef struct Item Item;
 
 typedef struct SymbolTable {
     Item* head;            // erstes Element
     Item* last;            // letztes Element
     struct SymbolTable* enclose;  // äußere (umgebende) Symboltabelle
-    Item* parent;          // übergeordnetes Objekt (z. B. Methode)
+    Item* parent;          // übergeordnetes Objekt (z. B. Methode)
 
     int no;                // für Visualisierung (VCG)
 } SymbolTable;

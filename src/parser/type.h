@@ -2,6 +2,7 @@
 #define TYPE_H
 
 #define MAX_CLASS_NAME_LENGTH 256
+#define TYPES_ARRAY_SIZE 6
 
 // Type constants
 #define NOTYPE 0
@@ -15,7 +16,8 @@ typedef struct {
     int basicType;       // object type
     int arrayType;       // array type
     char classType[MAX_CLASS_NAME_LENGTH];  // class type name
-} Type;
+    const char* types[TYPES_ARRAY_SIZE];    // Changed to fixed-size array
+} Type;  // Added semicolon here
 
 // Function declarations
 Type* initType(int type);

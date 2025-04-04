@@ -44,7 +44,7 @@ Item* createItemFull(const char* name, int kind, int subkind, Type* type, int is
     return item;
 }
 
-short createConstantPoolItem(Item* item, LinkedList* constantPool) {
+/*short createConstantPoolItem(Item* item, LinkedList* constantPool) {
     char desc[512];
     uint8_t* nameBytes;
     short index1 = 0, index2 = 0, index3 = 0;
@@ -103,7 +103,8 @@ short createConstantPoolItem(Item* item, LinkedList* constantPool) {
     }
 
     return item->constantPoolIndex;
-}
+}*/
+
 
 const char* getDescriptor(Item* item) {
     if (!item || !item->objectType) return "";
@@ -142,7 +143,19 @@ void itemToString(Item* item, char* buffer, int bufferSize) {
 
 void freeItem(Item* item) {
     if (!item) return;
-    if (item->objectName) free(item->objectName);
-    if (item->objectType) freeType(item->objectType);
+
+    // Free the object name if it exists
+    if (item->objectName) {
+        free(item->objectName);
+        item->objectName = NULL;
+    }
+
+    // Free the object type if it exists
+    if (item->objectType) {
+        freeType(item->objectType);
+        item->objectType = NULL;
+    }
+
+    // Free the item itself
     free(item);
 }
