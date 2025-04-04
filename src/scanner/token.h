@@ -5,17 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct
+{
     int symbol;
     int line;
     int column;
     char *type;
     int intValue;
     char *identifier;
-}Token;
+} Token;
 
-
-// Token-Klassen als Konstanten (mit extern)
 extern const int SYM_LEFT_PARENT;
 extern const int SYM_RIGHT_PARENT;
 extern const int SYM_LEFT_CURVED_PARENT;
@@ -50,10 +49,8 @@ extern const int SYM_STATIC;
 extern const int SYM_UNEQUAL;
 extern const int EOF_TOKEN;
 
-
-
 Token *create_token(int symbol, int line, int column, const char *type, int intValue, const char *identifier);
-void print_token( Token *token);
-void free_token(Token **token);
+void print_token(Token *token);
+void free_token(Token *token);
 
 #endif // TOKEN_H

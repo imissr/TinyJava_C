@@ -1,38 +1,54 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "node.h"
-#include "item.h"
-#include "type.h"
-
+#include "scanner.h"
+#include "input.h"
+#include "output.h"
+#include "token.h"
 
 
 int main() {
-    // Initialisiere einen Typ
-    Type* t = initType(TYPE_INT);
+    const char *test_filename = "/home/mohamad-khaled-minawe/Desktop/project/TinyJava_C/src/testFiles/testScanner.txt";
 
-    // Erzeuge ein Item
-    Item* item = createItemFull("myConst", KIND_VAR, NOSUBKIND, t, 0, 0, NULL);
+    printf("Creating test file...\n");
+    //create_test_file(test_filename);
 
-    // Erzeuge einen Node
-    Node* node = createNodeWithConst(CLASS_CONST, NOSUBCLASS, item, NULL, NULL, NULL, NULL, 42);
+    printf("Initializing scanner...\n");
+    Scanner *scanner = create_scanner(test_filename, 0);
+    if (!scanner) {
+        fprintf(stderr, "Fehler beim Erstellen des Scanners\n");
+        return EXIT_FAILURE;
+    }
 
-    // String-Puffer für Ausgabe
-    char buffer[256];
-    nodeToString(node, buffer, sizeof(buffer));
+    printf("Scanner initialized successfully!\n");
+    printf("Scanning symbols from test file:\n");
 
-    // Ausgabe
-    printf("Node:\n%s\n", buffer);
+    // Token-Loop
+    Token *token = NULL;
+    do {
+        token = scan_symbol(scanner);
 
-    // Speicher freigeben
-    if (item) {
-        freeItem(item);  // Free item first
-        item = NULL;
+        if (token == NULL) {
+            fprintf(stderr, "Error: scan_symbol returned NULL\n");
+            break;
+        }
+        print_token(token);
+
+    } while (token->symbol != EOF_TOKEN);
+
+    output_printErrorReport(scanner->output);
+    printf("Final Token: ");
+    print_token(token);
+
+
+
+    // EOF-Token freigeben
+    if (token) {
+        free_token(&token);
     }
     
-    if (node) {
-        freeNode(node);  // Then free node
-        node = NULL;
-    }
+
+    printf("Freeing scanner...\n");
+    free_scanner(scanner);
+    printf("Scanner freed successfully!\n");
+
     return 0;
 }

@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 // Struktur für einen einzelnen Knoten der Liste
 typedef struct LinkedListNode {
@@ -30,7 +31,7 @@ void* linkedlist_remove_first(LinkedList* list);
 size_t linkedlist_size(LinkedList* list);
 
 // Prüft, ob die Liste leer ist (1 = leer, 0 = nicht leer)
-int linkedlist_is_empty(LinkedList* list);
+bool linkedlist_is_empty(LinkedList* list);
 
 // Gibt den Kopf der Liste zurück (ohne zu entfernen)
 LinkedListNode* linkedlist_head(LinkedList* list);

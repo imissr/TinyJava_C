@@ -52,7 +52,7 @@ size_t linkedlist_size(LinkedList* list) {
 }
 
 // Prüft, ob die Liste leer ist
-int linkedlist_is_empty(LinkedList* list) {
+bool linkedlist_is_empty(LinkedList* list) {
     return list->size == 0;
 }
 

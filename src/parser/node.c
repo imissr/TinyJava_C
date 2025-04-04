@@ -42,6 +42,123 @@ int main() {
 }
 */
 
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "node.h"
+#include "item.h"
+#include "type.h"
+#include "symboltable.h"
+
+extern const char* types[];
+
+void test_node_functionality() {
+    // Create types
+    Type* intType = initType(TYPE_INT);
+    Type* boolType = initType(TYPE_BOOLEAN);
+    Type* voidType = initType(TYPE_VOID);
+    Type* classTypeA = initTypeFull(TYPE_CLASS, NOTYPE, "MyClass");
+    Type* classTypeB = initTypeFull(TYPE_CLASS, NOTYPE, "OtherClass");
+
+    // Create items
+    Item* varItem = createItemFull("x", KIND_VAR, NOSUBKIND, intType, 0, 0, NULL);
+    Item* constItem = createItemFull("c", KIND_VAR, NOSUBKIND, intType, 0, 0, NULL);
+    Item* boolItem = createItemFull("b", KIND_VAR, NOSUBKIND, boolType, 0, 0, NULL);
+    Item* classItemA = createItemFull("objA", KIND_VAR, NOSUBKIND, classTypeA, 0, 0, NULL);
+    Item* classItemB = createItemFull("objB", KIND_VAR, NOSUBKIND, classTypeB, 0, 0, NULL);
+    //Item* staticItem = createItemFull("staticVar", KIND_VAR, NOSUBKIND, intType, 1, 0, NULL);
+    Item* methodItem = createItemFull("myMethod", KIND_METHOD, NOSUBKIND, voidType, 1, 0, NULL);
+
+    // Set up parent relationship for staticMethodVisitor
+    //SymbolTable* methodTable = createSymbolTable(NULL);
+    //methodTable->parent = methodItem;
+    //staticItem->parentTable = methodTable;
+
+    // Create basic nodes
+    Node* constNode = createNodeWithConst(CLASS_CONST, NOSUBCLASS, constItem, NULL, NULL, NULL, NULL, 42);
+    Node* varNode = createNodeFull(CLASS_VAR, NOSUBCLASS, varItem, NULL, NULL, NULL, NULL);
+    Node* binopNode = createNodeFull(CLASS_BINOP, SUBCLASS_PLUS, constItem, constNode, varNode, NULL, NULL);
+
+    // Test copy constructor
+    Node* copyNode = createNodeFrom(binopNode);
+
+    // Test attachNode
+    attachNode(binopNode, copyNode);
+
+    // Test concatNodes
+    Node* anotherNode = createNodeWithConst(CLASS_CONST, NOSUBCLASS, constItem, NULL, NULL, NULL, NULL, 7);
+    Node* concat = concatNodes(copyNode, anotherNode);
+
+    // Test deleteNode (deletes copyNode)
+    deleteNode(copyNode);
+
+    // Test typeVisitor
+    Node* boolLeft = createNodeFull(CLASS_VAR, NOSUBCLASS, boolItem, NULL, NULL, NULL, NULL);
+    Node* boolRight = createNodeFull(CLASS_VAR, NOSUBCLASS, boolItem, NULL, NULL, NULL, NULL);
+    Node* booleanCompare = createNodeFull(CLASS_BINOP, SUBCLASS_EQ, boolItem, boolLeft, boolRight, NULL, NULL);
+
+    printf("typeVisitor (bool == bool): %s\n", typeVisitor(booleanCompare) ? "true" : "false");
+
+    // Test staticMethodVisitor
+    //Node* staticUse = createNodeFull(CLASS_VAR, NOSUBCLASS, staticItem, NULL, NULL, NULL, NULL);
+    //Node* methodRoot = createNodeFull(CLASS_METHOD, NOSUBCLASS, methodItem, staticUse, NULL, NULL, NULL);
+    //printf("staticMethodVisitor (allowed): %s\n", staticMethodVisitor(methodRoot) ? "true" : "false");
+
+    // Test returnMethodVisitor
+    Node* ret1 = createNodeFull(CLASS_RETURN, NOSUBCLASS, NULL, NULL, NULL, NULL, NULL);
+    Node* ret2 = createNodeFull(CLASS_VAR, NOSUBCLASS, varItem, NULL, NULL, NULL, NULL);
+    ret1->next = ret2;
+    printf("returnMethodVisitor (should be false): %s\n", returnMethodVisitor(ret1) ? "true" : "false");
+
+    Node* finalReturn = createNodeFull(CLASS_RETURN, NOSUBCLASS, NULL, NULL, NULL, NULL, NULL);
+    printf("returnMethodVisitor (should be true): %s\n", returnMethodVisitor(finalReturn) ? "true" : "false");
+
+    // Test toString
+    char buffer[256];
+    printf("\nNode.toString() test:\n");
+    nodeToString(constNode, buffer, sizeof(buffer));
+    printf("%s\n", buffer);
+    nodeToString(binopNode, buffer, sizeof(buffer));
+    printf("%s\n", buffer);
+    nodeToString(booleanCompare, buffer, sizeof(buffer));
+    printf("%s\n", buffer);
+
+    // Cleanup
+    freeNode(constNode);
+    freeNode(varNode);
+    freeNode(binopNode);
+    freeNode(anotherNode);
+    freeNode(boolLeft);
+    freeNode(boolRight);
+    freeNode(booleanCompare);
+    //freeNode(staticUse);
+    //freeNode(methodRoot);
+    freeNode(ret1);
+    freeNode(ret2);
+    freeNode(finalReturn);
+
+    freeItem(varItem);
+    freeItem(constItem);
+    freeItem(boolItem);
+    freeItem(classItemA);
+    freeItem(classItemB);
+    //freeItem(staticItem);
+    freeItem(methodItem);
+
+    freeType(intType);
+    freeType(boolType);
+    freeType(voidType);
+    freeType(classTypeA);
+    freeType(classTypeB);
+
+}
+
+int main() {
+    test_node_functionality();
+    return 0;
+}*/
+
 static int globalNodeCounter = 0;
 
 const char *kinds[] = {
@@ -432,36 +549,34 @@ void nodeToString(const Node *node, char *buffer, size_t bufferSize)
     }
 }
 
-void freeNode(Node *node)
-{
-    if (!node)
-        return;
-
-    // First free children nodes
-    if (node->left)
-    {
-        freeNode(node->left);
-        node->left = NULL;
-    }
-    if (node->right)
-    {
-        freeNode(node->right);
-        node->right = NULL;
-    }
-    if (node->next)
-    {
-        freeNode(node->next);
+void freeNode(Node* node) {
+    if (!node) return;
+    
+    // Break circular references
+    if (node->next) {
+        node->next->prev = NULL;
         node->next = NULL;
     }
-
-    // Don't free nodeObject here - it should be managed separately
-    // The Item structure should be freed by the caller using freeItem()
+    if (node->prev) {
+        node->prev->next = NULL;
+        node->prev = NULL;
+    }
+    
+    // Clear parent/child relationships
+    if (node->left) {
+        node->left->parent = NULL;
+        node->left = NULL;
+    }
+    if (node->right) {
+        node->right->parent = NULL;
+        node->right = NULL;
+    }
+    if (node->parent) {
+        node->parent = NULL;
+    }
+    
+    // Don't free nodeObject here - it's managed separately
     node->nodeObject = NULL;
-
-    // Clear other pointers
-    node->parent = NULL;
-    node->prev = NULL;
-
-    // Finally free the node itself
+    
     free(node);
 }

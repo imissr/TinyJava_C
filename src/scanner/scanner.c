@@ -28,20 +28,20 @@ int main() {
     Token *token = NULL;
     do {
         token = scan_symbol(scanner);
-    
+
         if (token == NULL) {
             fprintf(stderr, "Error: scan_symbol returned NULL\n");
-            break;  
+            break;
         }
         print_token(token);
-    
+
     } while (token->symbol != EOF_TOKEN);
-    
+
     output_printErrorReport(scanner->output);
     printf("Final Token: ");
     print_token(token);
 
-    
+
 
     // EOF-Token freigeben
     if (token) {
@@ -56,39 +56,39 @@ int main() {
 }
 */
 
-
-
-Scanner *create_scanner(const char *filename, int debug) {
-
+Scanner *create_scanner(const char *filename, int debug)
+{
 
     Scanner *scanner = (Scanner *)malloc(sizeof(Scanner));
-    if (!scanner) {
+    if (!scanner)
+    {
         fprintf(stderr, "Memory allocation failed for Scanner\n");
         exit(EXIT_FAILURE);
     }
 
     scanner->input = input_init(filename);
-    if (!scanner->input) {
+    if (!scanner->input)
+    {
         perror("Failed to open file");
         free(scanner);
         exit(EXIT_FAILURE);
     }
 
     scanner->output = output_create();
-      
 
     scanner->line = 1;
     scanner->column = 1;
     scanner->isDebug = debug;
-    scanner->ch = input_next(scanner->input);  // Read first character
-    scanner->keywords = create_hashtable();  // Initialize keyword table
+    scanner->ch = input_next(scanner->input); // Read first character
+    scanner->keywords = create_hashtable();   // Initialize keyword table
     scanner->token = NULL;
-    reserve_keywords(scanner);  // Initialize keyword table
-    
+    reserve_keywords(scanner); // Initialize keyword table
+
     return scanner;
 }
 
-void reserve_keywords(Scanner *scanner) {
+void reserve_keywords(Scanner *scanner)
+{
     insert_hashtable(scanner->keywords, "if", SYM_IF);
     insert_hashtable(scanner->keywords, "else", SYM_ELSE);
     insert_hashtable(scanner->keywords, "class", SYM_CLASS);
@@ -101,196 +101,260 @@ void reserve_keywords(Scanner *scanner) {
     insert_hashtable(scanner->keywords, "static", SYM_STATIC);
 }
 
-Token *scan_symbol(Scanner *scanner) {
-    if (!scanner) {
+Token *scan_symbol(Scanner *scanner)
+{
+    if (!scanner)
+    {
         fprintf(stderr, "Error: scanner is NULL in scan_symbol()\n");
         exit(EXIT_FAILURE);
     }
-    
+
     sift_symbols(scanner);
 
-
-      if (scanner->ch == EOF || scanner->ch == -1) {
+    if (scanner->ch == EOF || scanner->ch == -1)
+    {
 
         printf("End of file reached!\n");
         return create_token(EOF_TOKEN, scanner->line, scanner->column, "EOF", 0, NULL);
     }
 
+    switch (scanner->ch)
+    {
 
-    switch (scanner->ch) {
-     
-        case '(': scanner->token = create_token(SYM_LEFT_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
-        case ')': scanner->token = create_token(SYM_RIGHT_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
-        case '{': scanner->token = create_token(SYM_LEFT_CURVED_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
-        case '}': scanner->token = create_token(SYM_RIGHT_CURVED_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
-        case '+': scanner->token = create_token(SYM_ADD, scanner->line, scanner->column, "OPERATOR", 0, NULL); get_symbol(scanner); break;
-        case '-': scanner->token = create_token(SYM_SUB, scanner->line, scanner->column, "OPERATOR", 0, NULL); get_symbol(scanner); break;
-        case '*': scanner->token = create_token(SYM_TIMES, scanner->line, scanner->column, "OPERATOR", 0, NULL); get_symbol(scanner); break;
-        case '/': scanner->token = create_token(SYM_DIV, scanner->line, scanner->column, "OPERATOR", 0, NULL); get_symbol(scanner); break;
-        case ';': scanner->token = create_token(SYM_SEMICOLON, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
-        case ',': scanner->token = create_token(SYM_COMMA, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
-        case '.': scanner->token = create_token(SYM_DOT, scanner->line, scanner->column, "SEPARATOR", 0, NULL); get_symbol(scanner); break;
+    case '(':
+        scanner->token = create_token(SYM_LEFT_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case ')':
+        scanner->token = create_token(SYM_RIGHT_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case '{':
+        scanner->token = create_token(SYM_LEFT_CURVED_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case '}':
+        scanner->token = create_token(SYM_RIGHT_CURVED_PARENT, scanner->line, scanner->column, "SEPARATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case '+':
+        scanner->token = create_token(SYM_ADD, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case '-':
+        scanner->token = create_token(SYM_SUB, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case '*':
+        scanner->token = create_token(SYM_TIMES, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case '/':
+        scanner->token = create_token(SYM_DIV, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case ';':
+        scanner->token = create_token(SYM_SEMICOLON, scanner->line, scanner->column, "SEPARATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case ',':
+        scanner->token = create_token(SYM_COMMA, scanner->line, scanner->column, "SEPARATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
+    case '.':
+        scanner->token = create_token(SYM_DOT, scanner->line, scanner->column, "SEPARATOR", 0, NULL);
+        get_symbol(scanner);
+        break;
 
-        case '=':
+    case '=':
 
-            if (input_peek(scanner->input) == '=') {
-                scanner->token = create_token(SYM_EQUAL, scanner->line, scanner->column, "OPERATOR", 0, NULL);
-                get_symbol(scanner);
-                get_symbol(scanner);
-              break;
-            } else {
-                scanner->token = create_token(SYM_ASSIGN, scanner->line, scanner->column, "OPERATOR", 0, NULL);
-            }
+        if (input_peek(scanner->input) == '=')
+        {
+            scanner->token = create_token(SYM_EQUAL, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+            get_symbol(scanner);
             get_symbol(scanner);
             break;
+        }
+        else
+        {
+            scanner->token = create_token(SYM_ASSIGN, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+        }
+        get_symbol(scanner);
+        break;
 
-        case '<':
-            if (input_peek(scanner->input) == '=') {
-                scanner->token = create_token(SYM_LESS_EQUAL, scanner->line, scanner->column, "OPERATOR", 0, NULL);
-                get_symbol(scanner);
-                get_symbol(scanner);
-              break;
-            } else {
-                scanner->token = create_token(SYM_LESS, scanner->line, scanner->column, "OPERATOR", 0, NULL);
-            }
+    case '<':
+        if (input_peek(scanner->input) == '=')
+        {
+            scanner->token = create_token(SYM_LESS_EQUAL, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+            get_symbol(scanner);
             get_symbol(scanner);
             break;
+        }
+        else
+        {
+            scanner->token = create_token(SYM_LESS, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+        }
+        get_symbol(scanner);
+        break;
 
-        case '>':
-            if (input_peek(scanner->input) == '=') {
-                scanner->token = create_token(SYM_GREATER_EQUAL, scanner->line, scanner->column, "OPERATOR", 0, NULL);
-                get_symbol(scanner);
-                get_symbol(scanner);
-                   
-                break;     
-            } else {
-                scanner->token = create_token(SYM_GREATER, scanner->line, scanner->column, "OPERATOR", 0, NULL);
-            }
-               
-             get_symbol(scanner);
+    case '>':
+        if (input_peek(scanner->input) == '=')
+        {
+            scanner->token = create_token(SYM_GREATER_EQUAL, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+            get_symbol(scanner);
+            get_symbol(scanner);
+
             break;
+        }
+        else
+        {
+            scanner->token = create_token(SYM_GREATER, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+        }
 
-        case '!':
+        get_symbol(scanner);
+        break;
 
-            if (input_peek(scanner->input) == '=') {
-                scanner->token = create_token(SYM_UNEQUAL, scanner->line, scanner->column, "OPERATOR", 0, NULL);
-                get_symbol(scanner);
-                get_symbol(scanner);
-                break;
-            } else {
-                output_add_lexical_error(scanner->output, scanner->line, scanner->column, "Expected '=' after '!'");
-            }
+    case '!':
+
+        if (input_peek(scanner->input) == '=')
+        {
+            scanner->token = create_token(SYM_UNEQUAL, scanner->line, scanner->column, "OPERATOR", 0, NULL);
+            get_symbol(scanner);
             get_symbol(scanner);
             break;
+        }
+        else
+        {
+            output_add_lexical_error(scanner->output, scanner->line, scanner->column, "Expected '=' after '!'");
+        }
+        get_symbol(scanner);
+        break;
 
-        case EOF:
-            printf("Hi im here\n");
-            scanner->token = create_token(EOF_TOKEN, scanner->line, scanner->column, "EOF", 0, NULL);
-            break;
+    case EOF:
+        printf("Hi im here\n");
+        scanner->token = create_token(EOF_TOKEN, scanner->line, scanner->column, "EOF", 0, NULL);
+        break;
 
-        default:
-        if (isalpha(scanner->ch)) { 
-        
-            char id[256] = {0};  
+    default:
+        if (isalpha(scanner->ch))
+        {
+
+            char id[256] = {0};
             int i = 0;
-        
-            do {
+
+            do
+            {
                 id[i++] = scanner->ch;
                 get_symbol(scanner);
             } while (isalnum(scanner->ch));
-        
-            id[i] = '\0'; 
+
+            id[i] = '\0';
 
             int keyword_type = lookup_hashtable(scanner->keywords, id);
-            if (keyword_type != -1) {
+            if (keyword_type != -1)
+            {
                 scanner->token = create_token(keyword_type, scanner->line, scanner->column, "KEYWORD", 0, NULL);
-            } else {
+            }
+            else
+            {
                 scanner->token = create_token(SYM_ID, scanner->line, scanner->column, "IDENTIFIER", 0, id);
             }
         }
-        else if (isdigit(scanner->ch)) {  
-            char num[256] = {0};  
+        else if (isdigit(scanner->ch))
+        {
+            char num[256] = {0};
             int i = 0;
-            
-            do {
+
+            do
+            {
                 num[i++] = scanner->ch;
                 get_symbol(scanner);
             } while (isdigit(scanner->ch));
-    
-            num[i] = '\0';  // Null terminate the string
-    
-            if (!check_int_range(num)) {
+
+            num[i] = '\0'; // Null terminate the string
+
+            if (!check_int_range(num))
+            {
                 strcpy(num, "0");
             }
             scanner->token = create_token(SYM_NUMBER, scanner->line, scanner->column, "NUMBER", atoi(num), NULL);
         }
-        else {  // Handle unknown characters
-       
+        else
+        { // Handle unknown characters
+
             char msg[64];
             snprintf(msg, sizeof(msg), "unknown char '%c' found", scanner->ch);
             output_add_lexical_error(scanner->output, scanner->line, scanner->column, msg);
-            get_symbol(scanner);  // Skip to next character
+            get_symbol(scanner); // Skip to next character
         }
         break;
     }
 
-    if (scanner->isDebug) {
+    if (scanner->isDebug)
+    {
         print_token(scanner->token);
     }
 
     return scanner->token;
 }
 
-
 // Read the next character from input
-char get_symbol(Scanner *scanner) {
+char get_symbol(Scanner *scanner)
+{
     scanner->ch = input_next(scanner->input);
     scanner->column++;
     return scanner->ch;
 }
 
-void sift_symbols(Scanner *scanner) {
-    while (scanner->ch != EOF && scanner->ch <= ' ') { 
-        if (scanner->ch == '\n') {
+void sift_symbols(Scanner *scanner)
+{
+    while (scanner->ch != EOF && scanner->ch <= ' ')
+    {
+        if (scanner->ch == '\n')
+        {
             scanner->line++;
             scanner->column = 1;
         }
-        get_symbol(scanner); 
+        get_symbol(scanner);
     }
 }
 
-
 // Check if an integer is within range
-int check_int_range(const char *s) {
+bool check_int_range(const char *s)
+{
     long val = strtol(s, NULL, 10);
-    if (val > 32767 || val < -32768) {
+    if (val > 32767 || val < -32768)
+    {
         printf("Lexical Error: number %s out of range (>32767)\n", s);
         return 0;
     }
     return 1;
 }
 
+void free_scanner(Scanner *scanner)
+{
+    if (!scanner)
+        return;
 
-
-void free_scanner(Scanner *scanner) {
-    if (!scanner) return;
-
-    if (scanner->token) {
-        free_token(&scanner->token);
+    if (scanner->token)
+    {
+        free_token(scanner->token);
     }
 
-    if (scanner->input) {
+    if (scanner->input)
+    {
         input_close(scanner->input);
     }
 
-    if (scanner->keywords) {
+    if (scanner->keywords)
+    {
         free_hashtable(scanner->keywords);
     }
 
-    if (scanner->output) {
+    if (scanner->output)
+    {
         output_free(scanner->output);
     }
 
     free(scanner);
 }
-

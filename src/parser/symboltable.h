@@ -1,37 +1,36 @@
 #ifndef SYMBOLTABLE_H
 #define SYMBOLTABLE_H
 
-#include "linkedlist.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdbool.h>
 
-// Forward declaration of Item
+
+// Forward Declaration
 struct Item;
 typedef struct Item Item;
-
-typedef struct SymbolTable {
-    Item* head;            // erstes Element
-    Item* last;            // letztes Element
-    struct SymbolTable* enclose;  // äußere (umgebende) Symboltabelle
-    Item* parent;          // übergeordnetes Objekt (z. B. Methode)
-
-    int no;                // für Visualisierung (VCG)
+typedef struct SymbolTable
+{
+    Item *head;
+    Item *last;
+    struct SymbolTable *enclose;
+    Item *parent;
+    int no;
 } SymbolTable;
 
-// Konstruktor
-SymbolTable* createSymbolTable(SymbolTable* enclose);
+SymbolTable *createSymbolTable(SymbolTable *enclose);
 
-// Einfügen, Löschen, Suchen
-int insertItem(SymbolTable* table, Item* item);
-int deleteItem(SymbolTable* table, const char* name, int kind);
-Item* getObject(SymbolTable* table, const char* name);
-Item* getObjectWithKind(SymbolTable* table, const char* name, int kind);
+bool insertItem(SymbolTable *table, Item *object);
 
-// Methoden-Elternelement
-Item* getParentMethod(SymbolTable* table);
+bool deleteItem(SymbolTable *table, const char *name, int kind);
 
-// Debug
-void printSymbolTable(SymbolTable* table);
+Item *getObject(SymbolTable *table, const char *name);
 
-// Freigabe
-void freeSymbolTable(SymbolTable* table);
+Item *getObjectWithKind(SymbolTable *table, const char *name, int kind);
+
+Item *getParentMethod(SymbolTable *table);
+
+const char *symbolTableToString(SymbolTable *table, char *buffer, int bufSize);
 
 #endif

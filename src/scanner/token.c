@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "token.h"
-//#include "../include/token.h"
+// #include "../include/token.h"
 
 // Token-Klassen als Konstanten definieren
 
@@ -41,19 +41,18 @@ const int SYM_STATIC = 30;
 const int SYM_UNEQUAL = 31;
 const int EOF_TOKEN = 32;
 
-
-
 // Zeichenfolgen für Token-Symbole
 static const char *symbols[] = {
     "(", ")", "{", "}", "==", "<", ">", "<=",
     ">=", "=", "+", "-", "*", "/", ".", ";", ",", "if", "else", "class", "final",
     "void", "int", "while", "IDENTIFIER", "NUMBER", "[", "]", "new", "return",
-    "static", "!=", "EOF"
-};
+    "static", "!=", "EOF"};
 
-Token *create_token(int symbol, int line, int column, const char *type, int intValue, const char *identifier) {
+Token *create_token(int symbol, int line, int column, const char *type, int intValue, const char *identifier)
+{
     Token *token = (Token *)malloc(sizeof(Token));
-    if (!token) {
+    if (!token)
+    {
         fprintf(stderr, "Memory allocation failed for Token\n");
         exit(EXIT_FAILURE);
     }
@@ -66,7 +65,7 @@ Token *create_token(int symbol, int line, int column, const char *type, int intV
     token->type = type ? strdup(type) : NULL;
 
     token->intValue = intValue;
-    
+
     // Falls `identifier` bereits dynamisch ist, verwende direkt `malloc()`
     token->identifier = identifier ? strdup(identifier) : NULL;
 
@@ -74,49 +73,46 @@ Token *create_token(int symbol, int line, int column, const char *type, int intV
 }
 
 // Funktion zur Darstellung des Tokens als String
-void print_token( Token *token) {
-    if (!token) return;
-    if(token == NULL) {
+void print_token(Token *token)
+{
+    if (!token)
+        return;
+    if (token == NULL)
+    {
         printf("Token is NULL\n");
         return;
     }
     printf("line %d, col %d: %s ", token->line, token->column, token->type);
-    if (token->symbol == SYM_NUMBER) {
+    if (token->symbol == SYM_NUMBER)
+    {
         printf("%d", token->intValue);
-    } else if (token->symbol == SYM_ID && token->identifier) {
+    }
+    else if (token->symbol == SYM_ID && token->identifier)
+    {
         printf("%s", token->identifier);
-    } else if (token->symbol == EOF_TOKEN) {
+    }
+    else if (token->symbol == EOF_TOKEN)
+    {
         printf("EOF");
-    } else {
+    }
+    else
+    {
         printf("%s", symbols[token->symbol]);
     }
     printf("\n");
 }
 
-void free_token(Token **token) {
-    if (!token || !(*token)) {
-        return; // Falls der Zeiger bereits NULL ist, nichts tun
-    }
+void free_token(Token *token)
+{
+    if (!token)
+        return;
 
-    printf("Freeing token: %p (type=%s, identifier=%s)\n",
-           (void *)(*token),
-           (*token)->type ? (*token)->type : "NULL",
-           (*token)->identifier ? (*token)->identifier : "NULL");
+    // Free dynamically allocated strings
+    if (token->type)
+        free(token->type);
+    if (token->identifier)
+        free(token->identifier);
 
-    // Speicher für type freigeben, falls vorhanden
-    if ((*token)->type) {
-        free((*token)->type);
-        (*token)->type = NULL;
-    }
-    
-    // Speicher für identifier freigeben, falls vorhanden
-    if ((*token)->identifier) {
-        free((*token)->identifier);
-        (*token)->identifier = NULL;
-    }
-
-    // Speicher für das Token selbst freigeben
-    free(*token);
-    *token = NULL; // Setze den Zeiger auf NULL, um doppelte Freigaben zu verhindern
+    // Free the token structure itself
+    free(token);
 }
-
