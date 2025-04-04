@@ -155,31 +155,29 @@ void itemToString(Item *item, char *buffer, int bufferSize)
              item->staticModifier ? "static" : "-");
 }
 
-void freeItem(Item *item)
-{
-    if (!item)
-        return;
+void freeItem(Item *item) {
+    if (!item) return;
 
-    // Free the object name if it exists
-    if (item->objectName)
-    {
+    // objectName wurde ggf. per strdup() alloziert
+    if (item->objectName) {
         free(item->objectName);
         item->objectName = NULL;
     }
 
-    // Free the object type if it exists
-    if (item->objectType)
-    {
+    // objectType wurde mit initTypeFull oder copyType erstellt
+    if (item->objectType) {
         freeType(item->objectType);
         item->objectType = NULL;
     }
 
-    if (item->fields)
-    {
-        freeSymbolTable(item->fields , freeItem);
+    // fields ist eine Symboltabelle (nur wenn vorhanden)
+    if (item->fields) {
+        freeSymbolTable(item->fields, freeItem);  // rekursiv
         item->fields = NULL;
     }
 
-    // Free the item itself
+    // parentTable NICHT freigeben – ist shared ownership
+    // next wird extern in SymbolTable verarbeitet – nicht hier freigeben
+
     free(item);
 }

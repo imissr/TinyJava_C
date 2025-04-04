@@ -109,5 +109,7 @@ void typeToString(const Type *t, char *buffer, int bufferSize)
 
 void freeType(Type *t)
 {
+
+
     free(t);
 }
