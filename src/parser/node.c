@@ -1,163 +1,41 @@
 #include "node.h"
 
-/*
-tested the tostring method
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+
+//test for the typeVisitor
+/*#include <stdio.h>
 #include "node.h"
 #include "item.h"
 #include "type.h"
-
-
 
 int main() {
-    // Initialisiere einen Typ
-    Type* t = initType(TYPE_INT);
-
-    // Erzeuge ein Item
-    Item* item = createItemFull("myConst", KIND_VAR, NOSUBKIND, t, 0, 0, NULL);
-
-    // Erzeuge einen Node
-    Node* node = createNodeWithConst(CLASS_CONST, NOSUBCLASS, item, NULL, NULL, NULL, NULL, 42);
-
-    // String-Puffer für Ausgabe
-    char buffer[256];
-    nodeToString(node, buffer, sizeof(buffer));
-
-    // Ausgabe
-    printf("Node:\n%s\n", buffer);
-
-    // Speicher freigeben
-    if (item) {
-        freeItem(item);  // Free item first
-        item = NULL;
-    }
-
-    if (node) {
-        freeNode(node);  // Then free node
-        node = NULL;
-    }
-    return 0;
-}
-*/
-
-/*
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "node.h"
-#include "item.h"
-#include "type.h"
-#include "symboltable.h"
-
-extern const char* types[];
-
-void test_node_functionality() {
-    // Create types
+    // Erstelle Typ: int
     Type* intType = initType(TYPE_INT);
-    Type* boolType = initType(TYPE_BOOLEAN);
-    Type* voidType = initType(TYPE_VOID);
-    Type* classTypeA = initTypeFull(TYPE_CLASS, NOTYPE, "MyClass");
-    Type* classTypeB = initTypeFull(TYPE_CLASS, NOTYPE, "OtherClass");
 
-    // Create items
-    Item* varItem = createItemFull("x", KIND_VAR, NOSUBKIND, intType, 0, 0, NULL);
-    Item* constItem = createItemFull("c", KIND_VAR, NOSUBKIND, intType, 0, 0, NULL);
-    Item* boolItem = createItemFull("b", KIND_VAR, NOSUBKIND, boolType, 0, 0, NULL);
-    Item* classItemA = createItemFull("objA", KIND_VAR, NOSUBKIND, classTypeA, 0, 0, NULL);
-    Item* classItemB = createItemFull("objB", KIND_VAR, NOSUBKIND, classTypeB, 0, 0, NULL);
-    //Item* staticItem = createItemFull("staticVar", KIND_VAR, NOSUBKIND, intType, 1, 0, NULL);
-    Item* methodItem = createItemFull("myMethod", KIND_METHOD, NOSUBKIND, voidType, 1, 0, NULL);
+    // Erstelle Items mit Typ int
+    Item* leftItem = createItemFull("left", KIND_VAR, NOSUBKIND, copyType(intType), 0, 0, NULL);
+    Item* rightItem = createItemFull("right", KIND_VAR, NOSUBKIND, copyType(intType), 0, 0, NULL);
+    Item* opItem = createItemFull("add", KIND_VAR, NOSUBKIND, copyType(intType), 0, 0, NULL);
 
-    // Set up parent relationship for staticMethodVisitor
-    //SymbolTable* methodTable = createSymbolTable(NULL);
-    //methodTable->parent = methodItem;
-    //staticItem->parentTable = methodTable;
+    // Erstelle Nodes
+    Node* leftNode = createNodeFull(CLASS_CONST, NOSUBCLASS, leftItem, NULL, NULL, NULL, NULL);
+    Node* rightNode = createNodeFull(CLASS_CONST, NOSUBCLASS, rightItem, NULL, NULL, NULL, NULL);
+    Node* binOpNode = createNodeFull(CLASS_BINOP, SUBCLASS_PLUS, opItem, leftNode, rightNode, NULL, NULL);
 
-    // Create basic nodes
-    Node* constNode = createNodeWithConst(CLASS_CONST, NOSUBCLASS, constItem, NULL, NULL, NULL, NULL, 42);
-    Node* varNode = createNodeFull(CLASS_VAR, NOSUBCLASS, varItem, NULL, NULL, NULL, NULL);
-    Node* binopNode = createNodeFull(CLASS_BINOP, SUBCLASS_PLUS, constItem, constNode, varNode, NULL, NULL);
+    // Teste typeVisitor
+    printf("Result of typeVisitor: %s\n", typeVisitor(binOpNode) ? "true" : "false");
 
-    // Test copy constructor
-    Node* copyNode = createNodeFrom(binopNode);
-
-    // Test attachNode
-    attachNode(binopNode, copyNode);
-
-    // Test concatNodes
-    Node* anotherNode = createNodeWithConst(CLASS_CONST, NOSUBCLASS, constItem, NULL, NULL, NULL, NULL, 7);
-    Node* concat = concatNodes(copyNode, anotherNode);
-
-    // Test deleteNode (deletes copyNode)
-    deleteNode(copyNode);
-
-    // Test typeVisitor
-    Node* boolLeft = createNodeFull(CLASS_VAR, NOSUBCLASS, boolItem, NULL, NULL, NULL, NULL);
-    Node* boolRight = createNodeFull(CLASS_VAR, NOSUBCLASS, boolItem, NULL, NULL, NULL, NULL);
-    Node* booleanCompare = createNodeFull(CLASS_BINOP, SUBCLASS_EQ, boolItem, boolLeft, boolRight, NULL, NULL);
-
-    printf("typeVisitor (bool == bool): %s\n", typeVisitor(booleanCompare) ? "true" : "false");
-
-    // Test staticMethodVisitor
-    //Node* staticUse = createNodeFull(CLASS_VAR, NOSUBCLASS, staticItem, NULL, NULL, NULL, NULL);
-    //Node* methodRoot = createNodeFull(CLASS_METHOD, NOSUBCLASS, methodItem, staticUse, NULL, NULL, NULL);
-    //printf("staticMethodVisitor (allowed): %s\n", staticMethodVisitor(methodRoot) ? "true" : "false");
-
-    // Test returnMethodVisitor
-    Node* ret1 = createNodeFull(CLASS_RETURN, NOSUBCLASS, NULL, NULL, NULL, NULL, NULL);
-    Node* ret2 = createNodeFull(CLASS_VAR, NOSUBCLASS, varItem, NULL, NULL, NULL, NULL);
-    ret1->next = ret2;
-    printf("returnMethodVisitor (should be false): %s\n", returnMethodVisitor(ret1) ? "true" : "false");
-
-    Node* finalReturn = createNodeFull(CLASS_RETURN, NOSUBCLASS, NULL, NULL, NULL, NULL, NULL);
-    printf("returnMethodVisitor (should be true): %s\n", returnMethodVisitor(finalReturn) ? "true" : "false");
-
-    // Test toString
-    char buffer[256];
-    printf("\nNode.toString() test:\n");
-    nodeToString(constNode, buffer, sizeof(buffer));
-    printf("%s\n", buffer);
-    nodeToString(binopNode, buffer, sizeof(buffer));
-    printf("%s\n", buffer);
-    nodeToString(booleanCompare, buffer, sizeof(buffer));
-    printf("%s\n", buffer);
-
-    // Cleanup
-    freeNode(constNode);
-    freeNode(varNode);
-    freeNode(binopNode);
-    freeNode(anotherNode);
-    freeNode(boolLeft);
-    freeNode(boolRight);
-    freeNode(booleanCompare);
-    //freeNode(staticUse);
-    //freeNode(methodRoot);
-    freeNode(ret1);
-    freeNode(ret2);
-    freeNode(finalReturn);
-
-    freeItem(varItem);
-    freeItem(constItem);
-    freeItem(boolItem);
-    freeItem(classItemA);
-    freeItem(classItemB);
-    //freeItem(staticItem);
-    freeItem(methodItem);
+    // Aufräumen
+    //deleteNode(leftNode);
+    //deleteNode(rightNode);
+   // deleteNode(binOpNode);
+    freeNodeRecursive(binOpNode);
 
     freeType(intType);
-    freeType(boolType);
-    freeType(voidType);
-    freeType(classTypeA);
-    freeType(classTypeB);
 
-}
-
-int main() {
-    test_node_functionality();
     return 0;
 }*/
+
+//todo problem with const of node memory
 
 static int globalNodeCounter = 0;
 
@@ -175,22 +53,54 @@ Node *createNode()
     return createNodeFull(NOCLASS, NOSUBCLASS, NULL, NULL, NULL, NULL, NULL);
 }
 
+
 Node *createNodeFrom(Node *other)
 {
-    if (!other)
-        return NULL;
+    if (!other) return NULL;
+
+    // Nur das Item wird deep kopiert
+    Item *copiedItem = other->nodeObject ? createItemFrom(other->nodeObject) : NULL;
+
+
+    // Neue Node-Struktur mit übernommenen Zeigern
     Node *node = createNodeWithConst(
         other->nodeClass,
         other->nodeSubclass,
-        other->nodeObject,
-        other->left,
-        other->right,
-        other->parent,
-        other->next,
-        other->constIntValue);
-    node->prev = other->prev;
+        copiedItem,
+        other->left,      // übernehmen, nicht kopieren
+        other->right,     // übernehmen, nicht kopieren
+        other->parent,    // optional übernehmen
+        other->next,      // übernehmen, nicht kopieren
+        other->constIntValue
+    );
+    if(node->prev)
+     node->prev = other->prev; // auch prev übernehmen, falls nötig
+
+
     return node;
 }
+
+
+Node* copyNodeShallow(Node* other) {
+    if (other == NULL) return NULL;
+
+    Node* copy = malloc(sizeof(Node));
+    if (!copy) return NULL; // malloc failed
+
+    copy->nodeClass = other->nodeClass;
+    copy->nodeSubclass = other->nodeSubclass;
+    copy->nodeObject = other->nodeObject; // shallow copy
+    copy->left = other->left;             // shallow copy
+    copy->right = other->right;           // shallow copy
+    copy->parent = other->parent;         // shallow copy
+    copy->next = other->next;             // shallow copy
+    copy->prev = other->prev;             // shallow copy
+    copy->constIntValue = other->constIntValue;
+    copy->no = globalNodeCounter++;
+
+    return copy;
+}
+
 
 Node *createNodeWithClass(int kind)
 {
@@ -267,33 +177,31 @@ Node *concatNodes(Node *first, Node *second)
     return first;
 }
 
-/*void deleteNode(Node *node)
+
+
+void deleteNode(Node *node)
 {
     if (!node)
         return;
-
-    if (node->prev == NULL || node->prev->nodeClass == NOCLASS)
+    if (!node->prev || node->prev->nodeClass == NOCLASS)
     {
-        // Node is the first in a chain
-        if (node->next == NULL)
+        if (!node->next)
         {
-            // It’s a standalone node
             if (node->parent)
                 node->parent->right = NULL;
         }
         else
         {
-            // Replace this node with its next sibling
             if (node->parent)
+            {
                 node->parent->right = node->next;
-
-            node->next->parent = node->parent;
+                node->next->parent = node->parent;
+            }
         }
     }
     else
     {
-        // Node is not the first in a chain
-        if (node->next == NULL)
+        if (!node->next)
         {
             node->prev->next = NULL;
         }
@@ -304,66 +212,9 @@ Node *concatNodes(Node *first, Node *second)
         }
     }
 
-    // Detach the node from the AST
-    node->prev = NULL;
-    node->next = NULL;
-    node->parent = NULL;
-}*/
-
-void deleteNode(Node* node) {
-    if (!node) return;
-    if (!node->prev || node->prev->nodeClass == NOCLASS) {
-        if (!node->next) {
-            if (node->parent) node->parent->right = NULL;
-        } else {
-            if (node->parent) {
-                node->parent->right = node->next;
-                node->next->parent = node->parent;
-            }
-        }
-    } else {
-        if (!node->next) {
-            node->prev->next = NULL;
-        } else {
-            node->prev->next = node->next;
-            node->next->prev = node->prev;
-        }
-    }
-    freeItem(node->nodeObject); //need to free data after deleation
+    freeItem(node->nodeObject); // needed to free data after deleation
     free(node);
-    
-
 }
-
-
-//in case we need it 
-/*Node* deleteNodeFromChain(Node *node) {
-    if (!node) return NULL;
-
-    if (!node->prev || node->prev->nodeClass == NOCLASS) {
-        if (node->parent && node->parent->right == node)
-            node->parent->right = node->next;
-        if (node->next)
-            node->next->parent = node->parent;
-        if (node->next)
-            node->next->prev = NULL;
-
-        Node *next = node->next;
-        node->next = NULL;
-        node->parent = NULL;
-        return next;  // This is your new root
-    }
-
-    if (node->prev)
-        node->prev->next = node->next;
-    if (node->next)
-        node->next->prev = node->prev;
-
-    node->prev = NULL;
-    node->next = NULL;
-    node->parent = NULL;
-    return NULL;
-}*/
 
 bool typeVisitor(const Node *node)
 {
@@ -609,42 +460,8 @@ void nodeToString(const Node *node, char *buffer, size_t bufferSize)
         }
     }
 }
-//doesnt free item its only free the node 
-void freeNode(Node *node)
-{
-    if (!node)
-        return;
 
-    if (node->left)
-    {
-        freeNode(node->left);
-        node->left = NULL;
-    }
-
-    if (node->right)
-    {
-        freeNode(node->right);
-        node->right = NULL;
-    }
-
-    if (node->next)
-    {
-        freeNode(node->next);
-        node->next = NULL;
-    }
-
-    // Parent & Prev NICHT freigeben (kein Ownership)
-    node->parent = NULL;
-    node->prev = NULL;
-
-    // nodeObject wird extern verwaltet → nicht freigeben
-    node->nodeObject = NULL;
-
-    free(node); // Achtung: nodeObject wird separat verwaltet!
-}
-
-
-//free node with item
+// free ast tree
 void freeNodeRecursive(Node *node)
 {
     if (!node)
@@ -670,7 +487,7 @@ void freeNodeRecursive(Node *node)
 
     if (node->nodeObject)
     {
-        freeItem(node->nodeObject); 
+        freeItem(node->nodeObject);
         node->nodeObject = NULL;
     }
 

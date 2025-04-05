@@ -1,63 +1,47 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "node.h"
 #include "item.h"
 #include "type.h"
-#include "symboltable.h"
 
-extern const char *types[];
+int main() {
+    // Originale Typstruktur
+    Type* intType = initType(TYPE_INT);
 
-void test_node_functionality()
-{
-    // Step 1: Create a type (shared by both items)
-    Type *type = initType(TYPE_INT);
+    // Originale Items
+    Item* leftItem = createItemFull("left", KIND_VAR, NOSUBKIND, copyType(intType), 0, 0, NULL);
+    Item* rightItem = createItemFull("right", KIND_VAR, NOSUBKIND, copyType(intType), 0, 0, NULL);
+    Item* opItem = createItemFull("op", KIND_VAR, NOSUBKIND, copyType(intType), 0, 0, NULL);
 
-    // Step 2: Create 2 items
-    Item *item1 = createItemFull("i1", KIND_VAR, NOSUBKIND, copyType(type), 0, 0, NULL);
-    Item *item2 = createItemFull("i2", KIND_VAR, NOSUBKIND, copyType(type), 0, 0, NULL);
-    Item *item3 = createItemFull("i3", KIND_VAR, NOSUBKIND, copyType(type), 0, 0, NULL);
-    Item *item4 = createItemFull("i4", KIND_VAR, NOSUBKIND, copyType(type), 0, 0, NULL);
+    // Originale Nodes
+    Node* leftNode = createNodeWithClass(CLASS_CONST);
+    leftNode->nodeObject = leftItem;
 
-    // Step 3: Build node1 → node1b
-    Node *node1 = createNodeWithConst(CLASS_CONST, NOSUBCLASS, item1, NULL, NULL, NULL, NULL, 100);
-    Node *node1b = createNodeWithConst(CLASS_CONST, NOSUBCLASS, item2, NULL, NULL, NULL, NULL, 101);
-    attachNode(node1, node1b);
+    Node* rightNode = createNodeWithClass(CLASS_CONST);
+    rightNode->nodeObject = rightItem;
 
-    // Delete node1 and update the chain root!
-    //Node *node1Chain = deleteNodeFromChain(node1); // node1Chain now points to node1b
-    deleteNode(node1); // This will delete node1 but not node1b
-          
+   Node* opNode = createNodeFull(CLASS_BINOP, SUBCLASS_PLUS, opItem, leftNode, rightNode, NULL, NULL);
 
-    // Step 4: Build node2 → node2b
-    Node *node2 = createNodeWithConst(CLASS_CONST, NOSUBCLASS, item3, NULL, NULL, NULL, NULL, 200);
-    Node *node2b = createNodeWithConst(CLASS_CONST, NOSUBCLASS, item4, NULL, NULL, NULL, NULL, 201);
-    attachNode(node2, node2b);
+    
+   Node* copiedNode = createNodeFrom(opNode);
 
-    // Step 5: Concat the updated node1 chain (node1b) with node2 chain
-    Node *fullChain = concatNodes(node1b, node2); // node1b → node2 → node2b
+    // Beide Bäume prüfen mit typeVisitor
+   printf("Original typeVisitor: %s\n", typeVisitor(opNode) ? "true" : "false");
+   printf("Copied   typeVisitor: %s\n", typeVisitor(copiedNode) ? "true" : "false");
 
-    // Step 5: Print all nodes in the chain
-    char buf[256];
-    Node *cur = fullChain;
-    int i = 1;
-    while (cur)
-    {
-        printf("Node %d:\n", i++);
-        nodeToString(cur, buf, sizeof(buf));
-        printf("%s\n", buf);
-        cur = cur->next;
-    }
+   char buf[256];
+    printf("\nOriginal:\n");
+    nodeToString(opNode, buf, sizeof(buf));
+    printf("%s\n", buf);
 
-    // Step 6: Clean up everything
-    freeNodeRecursive(fullChain);
+    printf("\nKopie:\n");
+    nodeToString(copiedNode, buf, sizeof(buf));
+    printf("%s\n", buf);
 
-    freeType(type);
-    printf("✅ concatNodes test completed and memory freed.\n");
-}
 
-int main()
-{
-    test_node_functionality();
+    freeNodeRecursive(opNode);  
+    deleteNode(copiedNode);
+    freeType(intType);      
+      
+
     return 0;
 }

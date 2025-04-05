@@ -19,7 +19,7 @@ Item *createItemWithType(Type *type)
 Item *createItemFrom(Item *other)
 {
     return createItemFull(
-        other->objectName ? strdup(other->objectName) : NULL,
+        other->objectName ? other->objectName : NULL,
         other->itemKind,
         other->itemSubkind,
         copyType(other->objectType),
@@ -164,6 +164,12 @@ void freeItem(Item *item) {
         item->objectName = NULL;
     }
 
+    if(item->objectType){
+        // objectType wurde mit initType oder copyType erstellt
+        freeType(item->objectType);
+        item->objectType = NULL;
+    }
+
     // objectType wurde mit initTypeFull oder copyType erstellt
     if (item->objectType) {
         freeType(item->objectType);
@@ -176,8 +182,6 @@ void freeItem(Item *item) {
         item->fields = NULL;
     }
 
-    // parentTable NICHT freigeben – ist shared ownership
-    // next wird extern in SymbolTable verarbeitet – nicht hier freigeben
 
     free(item);
 }
