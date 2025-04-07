@@ -28,7 +28,7 @@ Scanner *create_scanner(const char *filename, int debug);
 void reserve_keywords(Scanner *scanner);
 Token *scan_symbol(Scanner *scanner);
 char get_symbol(Scanner *scanner);
-void sift_symbols(Scanner *scanner);
+void shift_symbols(Scanner *scanner);
 bool check_int_range(const char *s);
 char peek(Scanner *scanner);
 void free_scanner(Scanner *scanner);

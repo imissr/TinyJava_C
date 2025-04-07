@@ -1,47 +1,27 @@
 #include <stdio.h>
-#include "node.h"
-#include "item.h"
-#include "type.h"
+#include "bitset_wrapper.h"
+
+// Declare the C++ functions
+typedef struct bitset64 bitset64;
+
+extern bitset64* bitset_create();
+extern void bitset_set(bitset64* bs, int pos);
+extern void bitset_clear(bitset64* bs, int pos);
+extern int bitset_test(bitset64* bs, int pos);
+extern void bitset_destroy(bitset64* bs);
 
 int main() {
-    // Originale Typstruktur
-    Type* intType = initType(TYPE_INT);
+    bitset64* bs = bitset_create();
 
-    // Originale Items
-    Item* leftItem = createItemFull("left", KIND_VAR, NOSUBKIND, copyType(intType), 0, 0, NULL);
-    Item* rightItem = createItemFull("right", KIND_VAR, NOSUBKIND, copyType(intType), 0, 0, NULL);
-    Item* opItem = createItemFull("op", KIND_VAR, NOSUBKIND, copyType(intType), 0, 0, NULL);
+    bitset_set(bs, 1);
+    bitset_set(bs, 63);
 
-    // Originale Nodes
-    Node* leftNode = createNodeWithClass(CLASS_CONST);
-    leftNode->nodeObject = leftItem;
+    printf("Bit 1: %d\n", bitset_test(bs, 1));
+    printf("Bit 63: %d\n", bitset_test(bs, 63));
 
-    Node* rightNode = createNodeWithClass(CLASS_CONST);
-    rightNode->nodeObject = rightItem;
+    bitset_clear(bs, 1);
+    printf("Bit 1 after clear: %d\n", bitset_test(bs, 1));
 
-   Node* opNode = createNodeFull(CLASS_BINOP, SUBCLASS_PLUS, opItem, leftNode, rightNode, NULL, NULL);
-
-    
-   Node* copiedNode = createNodeFrom(opNode);
-
-    // Beide Bäume prüfen mit typeVisitor
-   printf("Original typeVisitor: %s\n", typeVisitor(opNode) ? "true" : "false");
-   printf("Copied   typeVisitor: %s\n", typeVisitor(copiedNode) ? "true" : "false");
-
-   char buf[256];
-    printf("\nOriginal:\n");
-    nodeToString(opNode, buf, sizeof(buf));
-    printf("%s\n", buf);
-
-    printf("\nKopie:\n");
-    nodeToString(copiedNode, buf, sizeof(buf));
-    printf("%s\n", buf);
-
-
-    freeNodeRecursive(opNode);  
-    deleteNode(copiedNode);
-    freeType(intType);      
-      
-
+    bitset_destroy(bs);
     return 0;
 }

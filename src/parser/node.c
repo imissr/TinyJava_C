@@ -1,7 +1,6 @@
 #include "node.h"
 
-
-//test for the typeVisitor
+// test for the typeVisitor
 /*#include <stdio.h>
 #include "node.h"
 #include "item.h"
@@ -35,7 +34,7 @@ int main() {
     return 0;
 }*/
 
-//todo problem with const of node memory
+// todo problem with const of node memory
 
 static int globalNodeCounter = 0;
 
@@ -53,39 +52,38 @@ Node *createNode()
     return createNodeFull(NOCLASS, NOSUBCLASS, NULL, NULL, NULL, NULL, NULL);
 }
 
-
 Node *createNodeFrom(Node *other)
 {
-    if (!other) return NULL;
+    if (!other)
+        return NULL;
 
     // Nur das Item wird deep kopiert
     Item *copiedItem = other->nodeObject ? createItemFrom(other->nodeObject) : NULL;
-
 
     // Neue Node-Struktur mit übernommenen Zeigern
     Node *node = createNodeWithConst(
         other->nodeClass,
         other->nodeSubclass,
         copiedItem,
-        other->left,      // übernehmen, nicht kopieren
-        other->right,     // übernehmen, nicht kopieren
-        other->parent,    // optional übernehmen
-        other->next,      // übernehmen, nicht kopieren
-        other->constIntValue
-    );
-    if(node->prev)
-     node->prev = other->prev; // auch prev übernehmen, falls nötig
-
+        other->left,   // übernehmen, nicht kopieren
+        other->right,  // übernehmen, nicht kopieren
+        other->parent, // optional übernehmen
+        other->next,   // übernehmen, nicht kopieren
+        other->constIntValue);
+    if (node->prev)
+        node->prev = other->prev; // auch prev übernehmen, falls nötig
 
     return node;
 }
 
+Node *copyNodeShallow(Node *other)
+{
+    if (other == NULL)
+        return NULL;
 
-Node* copyNodeShallow(Node* other) {
-    if (other == NULL) return NULL;
-
-    Node* copy = malloc(sizeof(Node));
-    if (!copy) return NULL; // malloc failed
+    Node *copy = malloc(sizeof(Node));
+    if (!copy)
+        return NULL; // malloc failed
 
     copy->nodeClass = other->nodeClass;
     copy->nodeSubclass = other->nodeSubclass;
@@ -100,7 +98,6 @@ Node* copyNodeShallow(Node* other) {
 
     return copy;
 }
-
 
 Node *createNodeWithClass(int kind)
 {
@@ -176,8 +173,6 @@ Node *concatNodes(Node *first, Node *second)
     temp->next = second;
     return first;
 }
-
-
 
 void deleteNode(Node *node)
 {

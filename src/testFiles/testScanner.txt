@@ -1,4 +1,4 @@
-class Test {
+@class Test {
     int number = 123;
     if (number >= 100) {
         return;

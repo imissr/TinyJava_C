@@ -70,23 +70,20 @@ Node *createNodeFull(int kind, int subkind, Item *object,
 Node *createNodeWithConst(int kind, int subkind, Item *object,
                           Node *l, Node *r, Node *p, Node *n, int intValue);
 
-
 void attachNode(Node *base, Node *node);
 
 Node *concatNodes(Node *first, Node *second);
 
 void deleteNode(Node *node);
 
-Node* deleteNodeFromChain(Node *node);
-
 void nodeToString(const Node *node, char *buffer, size_t bufferSize);
 
-bool typeVisitor(const Node* node);
+bool typeVisitor(const Node *node);
 
-bool staticMethodVisitor(const Node* node);
+bool staticMethodVisitor(const Node *node);
 
-bool returnMethodVisitor(const Node* node);
+bool returnMethodVisitor(const Node *node);
 
 void freeNodeRecursive(Node *node);
 
-#endif 
+#endif
