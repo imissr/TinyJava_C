@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern const char *symbols[];
 typedef struct
 {
     int symbol;

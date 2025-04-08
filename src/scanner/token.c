@@ -42,12 +42,14 @@ const int SYM_STATIC = 30;
 const int SYM_UNEQUAL = 31;
 const int EOF_TOKEN = 32;
 
-// Zeichenfolgen für Token-Symbole
-static const char *symbols[] = {
+const char *symbols[] = {
     "(", ")", "{", "}", "==", "<", ">", "<=",
     ">=", "=", "+", "-", "*", "/", ".", ";", ",", "if", "else", "class", "final",
     "void", "int", "while", "IDENTIFIER", "NUMBER", "[", "]", "new", "return",
-    "static", "!=", "EOF"};
+    "static", "!=", "EOF"
+};
+
+
 
 Token *create_token(int symbol, int line, int column, const char *type, int intValue, const char *identifier)
 {

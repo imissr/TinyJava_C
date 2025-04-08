@@ -1,5 +1,5 @@
 
-add_library(parser type.c  type.c node.c item.c dummyMethod.c  symboltable.c)
+add_library(parser type.c  type.c node.c item.c dummyMethod.c  symboltable.c )
 
 target_link_libraries(parser scanner datastruktur tools byteCode)
 

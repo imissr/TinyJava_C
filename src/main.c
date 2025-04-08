@@ -1,27 +1,48 @@
 #include <stdio.h>
-#include "bitset_wrapper.h"
-
-// Declare the C++ functions
-typedef struct bitset64 bitset64;
-
-extern bitset64* bitset_create();
-extern void bitset_set(bitset64* bs, int pos);
-extern void bitset_clear(bitset64* bs, int pos);
-extern int bitset_test(bitset64* bs, int pos);
-extern void bitset_destroy(bitset64* bs);
+#include <stdlib.h>
+#include "print_abstract_syntax_tree.h"
+#include "node.h"
+#include "item.h"
+#include "type.h"
 
 int main() {
-    bitset64* bs = bitset_create();
+    // Erzeuge einen einfachen AST: class -> method -> return const 42
 
-    bitset_set(bs, 1);
-    bitset_set(bs, 63);
+    // Klassenelement
+    Item *classItem = createItemFull("TestClass", KIND_CLASS, NOSUBKIND,
+        initTypeFull(TYPE_CLASS, NOTYPE, "TestClass"), 0, 0, NULL);
+    Node *classNode = createNodeFull(CLASS_CLASS, NOSUBCLASS, classItem, NULL, NULL, NULL, NULL);
 
-    printf("Bit 1: %d\n", bitset_test(bs, 1));
-    printf("Bit 63: %d\n", bitset_test(bs, 63));
+    // Methodenelement
+    Item *methodItem = createItemFull("main", KIND_METHOD, NOSUBKIND,
+        initType(TYPE_VOID), 1, 0, NULL);
+    Node *methodNode = createNodeFull(CLASS_METHOD, NOSUBCLASS, methodItem, NULL, NULL, classNode, NULL);
 
-    bitset_clear(bs, 1);
-    printf("Bit 1 after clear: %d\n", bitset_test(bs, 1));
+    // Rückgabeknoten mit Konstante 42
+    Item *constItem = createItem();
+    constItem->objectType = initType(TYPE_INT);
+    Node *constNode = createNodeWithConst(CLASS_CONST, NOSUBCLASS, constItem,
+        NULL, NULL, methodNode, NULL, 42);
 
-    bitset_destroy(bs);
+    Node *returnNode = createNodeFull(CLASS_RETURN, NOSUBCLASS, NULL,
+        constNode, NULL, methodNode, NULL);
+    constNode->parent = returnNode;
+
+    // Verknüpfen
+    methodNode->right = returnNode;
+    classNode->left = methodNode;
+
+    // VCG-Datei erzeugen
+    print_abstract_syntax_tree(classNode, "test_ast.vcg");
+
+    // Optional: debug-Ausgabe
+    char debug[256];
+    nodeToString(classNode, debug, sizeof(debug));
+    printf("Root Node: %s\n", debug);
+
+    // Aufräumen
+    freeNodeRecursive(classNode);
+
+    printf("AST wurde erfolgreich als test_ast.vcg erzeugt.\n");
     return 0;
 }
