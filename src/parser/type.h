@@ -21,10 +21,15 @@ typedef struct {
 
 // Function declarations
 Type* initType(int type);
+// constructor for to creat a new type from another type
 Type* copyType(const Type* other);
+// constructor to initiate a type with a class name
 Type* initTypeFull(int type, int arrayType, const char* classType);
+//fucntion to check if the type is a class
 int equalsType(const Type* t1, const Type* t2);
+// print the type
 void typeToString(const Type* t, char* buffer, int bufferSize);
+// free type
 void freeType(Type* t);
 
 #endif

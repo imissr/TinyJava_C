@@ -19,7 +19,7 @@ typedef struct {
     HashNode **table;
 } Hashtable;
 
-// Funktionen für die Hash-Tabelle
+
 Hashtable *create_hashtable();
 void insert_hashtable(Hashtable *ht, const char *key, int value);
 int lookup_hashtable(Hashtable *ht, const char *key);

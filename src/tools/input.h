@@ -9,19 +9,19 @@ typedef struct {
     int last;
 } Input;
 
-// Funktion zum Initialisieren der Eingabe
+// Function initialization
 Input* input_init(const char* path);
 
-// Liest das nächste Zeichen
+// reads the next character from the file
 char input_next(Input* input);
 
-// Schaut das nächste Zeichen an, ohne es zu konsumieren
+// see the next character without moving the file pointer
 char input_peek(Input* input);
 
-// Gibt das zuletzt gelesene Zeichen zurück
+// return the last read character
 char input_last(Input* input);
 
-// Schließt die Datei und gibt Speicher frei
+// free the input structure
 void input_close(Input* input);
 
 #endif

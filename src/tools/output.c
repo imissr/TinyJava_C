@@ -12,7 +12,7 @@ typedef struct
     LinkedList *semanticErrors;
 } Output;
 
-// Erstellt eine neue Output-Struktur
+
 Output *output_create()
 {
     Output *output = (Output *)malloc(sizeof(Output));
@@ -27,7 +27,7 @@ Output *output_create()
     return output;
 }
 
-// Fügt einen lexikalischen Fehler hinzu
+
 void output_add_lexical_error(Output *output, int line, int col, const char *msg)
 {
     char *errorMsg = (char *)malloc(256);
@@ -35,7 +35,7 @@ void output_add_lexical_error(Output *output, int line, int col, const char *msg
     linkedlist_append(output->lexicalErrors, errorMsg);
 }
 
-// Fügt einen syntaktischen Fehler hinzu
+
 void output_add_syntactical_error(Output *output, int line, int col, const char *msg)
 {
     char *errorMsg = (char *)malloc(256);
@@ -43,7 +43,7 @@ void output_add_syntactical_error(Output *output, int line, int col, const char 
     linkedlist_append(output->syntacticErrors, errorMsg);
 }
 
-// Fügt einen semantischen Fehler hinzu
+
 void output_add_semantic_error(Output *output, int line, int col, const char *msg)
 {
     char *errorMsg = (char *)malloc(256);
@@ -51,7 +51,7 @@ void output_add_semantic_error(Output *output, int line, int col, const char *ms
     linkedlist_append(output->semanticErrors, errorMsg);
 }
 
-// Prüft, ob Fehler gefunden wurden
+
 int output_errorFound(Output *output)
 {
     return !linkedlist_is_empty(output->lexicalErrors) ||
@@ -59,26 +59,25 @@ int output_errorFound(Output *output)
            !linkedlist_is_empty(output->semanticErrors);
 }
 
-// Druckt alle Fehler einer Liste
+
 void output_printErrorList(LinkedList *list, const char *category)
 {
     printf("# %s: found %zu errors\n", category, linkedlist_size(list));
     linkedlist_print(list, (void (*)(void *))puts);
 }
 
-// Druckt alle lexikalischen Fehler
 void output_printLexicalErrorReport(Output *output)
 {
     output_printErrorList(output->lexicalErrors, "lexical analysis");
 }
 
-// Druckt alle syntaktischen Fehler
+
 void output_printSyntacticalErrorReport(Output *output)
 {
     output_printErrorList(output->syntacticErrors, "syntactic analysis");
 }
 
-// Druckt alle semantischen Fehler
+
 void output_printSemanticErrorReport(Output *output)
 {
     output_printErrorList(output->semanticErrors, "semantic analysis");
@@ -108,7 +107,6 @@ void output_printErrorReport(Output *output)
     linkedlist_print(output->semanticErrors, print_string_error);
 }
 
-// Gibt die Output-Struktur frei
 void output_free(Output *output)
 {
     linkedlist_free(output->lexicalErrors, free);

@@ -50,8 +50,14 @@ extern const int SYM_STATIC;
 extern const int SYM_UNEQUAL;
 extern const int EOF_TOKEN;
 
+
+// initialzet the token
 Token *create_token(int symbol, int line, int column, const char *type, int intValue, const char *identifier);
+
+// function to print the token
 void print_token(Token *token);
+
+//free the token
 void free_token(Token *token);
 
 #endif // TOKEN_H

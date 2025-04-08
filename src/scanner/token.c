@@ -64,18 +64,17 @@ Token *create_token(int symbol, int line, int column, const char *type, int intV
     token->line = line;
     token->column = column;
 
-    // Prüfen, ob `type` ein statischer String ist (z. B. aus einer Symboltabelle)
+
     token->type = type ? strdup(type) : NULL;
 
     token->intValue = intValue;
 
-    // Falls `identifier` bereits dynamisch ist, verwende direkt `malloc()`
     token->identifier = identifier ? strdup(identifier) : NULL;
 
     return token;
 }
 
-// Funktion zur Darstellung des Tokens als String
+
 void print_token(Token *token)
 {
     if (!token)
@@ -110,12 +109,12 @@ void free_token(Token *token)
     if (!token)
         return;
 
-    // Free dynamically allocated strings
+
     if (token->type)
         free(token->type);
     if (token->identifier)
         free(token->identifier);
 
-    // Free the token structure itself
+
     free(token);
 }

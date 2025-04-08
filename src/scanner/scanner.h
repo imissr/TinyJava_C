@@ -25,12 +25,19 @@ typedef struct
 
 // Function declarations
 Scanner *create_scanner(const char *filename, int debug);
+//reserve keywords in the hash table
 void reserve_keywords(Scanner *scanner);
+// scan the next symbol and create a token
 Token *scan_symbol(Scanner *scanner);
+// read the next character from input
 char get_symbol(Scanner *scanner);
+// shift symbols to skip whitespace and comments
 void shift_symbols(Scanner *scanner);
+// check if an integer is within range
 bool check_int_range(const char *s);
+// peek the next character without consuming it
 char peek(Scanner *scanner);
+// free the scanner
 void free_scanner(Scanner *scanner);
 
 #endif

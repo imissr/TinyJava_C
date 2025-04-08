@@ -1,6 +1,6 @@
 #include "linkedlist.h"
 //zero memory leaks
-// Erstellt eine neue leere verkettete Liste
+
 LinkedList* linkedlist_create() {
     LinkedList* list = (LinkedList*)malloc(sizeof(LinkedList));
     if (!list) {
@@ -13,7 +13,7 @@ LinkedList* linkedlist_create() {
     return list;
 }
 
-// Fügt ein Element am Ende der Liste hinzu
+
 void linkedlist_append(LinkedList* list, void* data) {
     LinkedListNode* newNode = (LinkedListNode*)malloc(sizeof(LinkedListNode));
     if (!newNode) {
@@ -32,7 +32,7 @@ void linkedlist_append(LinkedList* list, void* data) {
     list->size++;
 }
 
-// Entfernt das erste Element aus der Liste und gibt die gespeicherte Daten zurück
+
 void* linkedlist_remove_first(LinkedList* list) {
     if (!list->head) return NULL;
 
@@ -40,28 +40,28 @@ void* linkedlist_remove_first(LinkedList* list) {
     void* data = temp->data;
     list->head = temp->next;
 
-    if (!list->head) list->tail = NULL; // Falls die Liste leer ist
+    if (!list->head) list->tail = NULL; 
     free(temp);
     list->size--;
     return data;
 }
 
-// Gibt die Anzahl der Elemente in der Liste zurück
+
 size_t linkedlist_size(LinkedList* list) {
     return list->size;
 }
 
-// Prüft, ob die Liste leer ist
+
 bool linkedlist_is_empty(LinkedList* list) {
     return list->size == 0;
 }
 
-// Gibt den Kopf der Liste zurück (ohne zu entfernen)
+
 LinkedListNode* linkedlist_head(LinkedList* list) {
     return list->head;
 }
 
-// Gibt die gesamte Liste frei (inklusive Daten, falls gewünscht)
+
 void linkedlist_free(LinkedList* list, void (*free_func)(void*)) {
     LinkedListNode* current = list->head;
     while (current) {
@@ -74,7 +74,7 @@ void linkedlist_free(LinkedList* list, void (*free_func)(void*)) {
     free(list);
 }
 
-// Druckt die Liste (benötigt eine Druckfunktion für die Daten)
+
 void linkedlist_print(LinkedList* list, void (*print_func)(void*)) {
     LinkedListNode* current = list->head;
     while (current) {

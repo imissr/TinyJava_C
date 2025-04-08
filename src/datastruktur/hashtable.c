@@ -1,6 +1,6 @@
 #include "hashtable.h"
 // zero memory leaks
-// Erstelle eine neue Hash-Tabelle
+
 Hashtable *create_hashtable() {
     Hashtable *ht = (Hashtable *)malloc(sizeof(Hashtable));
     if (!ht) {
@@ -21,7 +21,7 @@ Hashtable *create_hashtable() {
     return ht;
 }
 
-// Eintrag in die Hash-Tabelle einfügen
+
 void insert_hashtable(Hashtable *ht, const char *key, int value) {
     unsigned int index = hash_function(key);
     HashNode *new_node = (HashNode *)malloc(sizeof(HashNode));
@@ -37,7 +37,6 @@ void insert_hashtable(Hashtable *ht, const char *key, int value) {
     ht->table[index] = new_node;
 }
 
-// Eintrag aus der Hash-Tabelle suchen
 int lookup_hashtable(Hashtable *ht, const char *key) {
     unsigned int index = hash_function(key);
     HashNode *node = ht->table[index];
@@ -49,10 +48,10 @@ int lookup_hashtable(Hashtable *ht, const char *key) {
         node = node->next;
     }
 
-    return -1; // Nicht gefunden
+    return -1; 
 }
 
-// Speicher der Hash-Tabelle freigeben
+
 void free_hashtable(Hashtable *ht) {
     for (int i = 0; i < TABLE_SIZE; i++) {
         HashNode *node = ht->table[i];
@@ -67,7 +66,7 @@ void free_hashtable(Hashtable *ht) {
     free(ht);
 }
 
-// Einfache Hash-Funktion
+
 unsigned int hash_function(const char *key) {
     unsigned int hash = 0;
     while (*key) {
