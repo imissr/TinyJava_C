@@ -84,8 +84,7 @@ Token *get_next_token(ParserLL1 *parser) {
 }
 
 bool check_token(ParserLL1 *parser, int expected) {
-    if (parser->token->symbol == expected) {
-        get_next_token(parser);
+    if (peek_token(parser, expected)) {
         return true;
     } else {
         char msg[128];
@@ -120,7 +119,7 @@ void semantic_error(ParserLL1 *parser, const char *message) {
     output_add_semantic_error(parser->out, parser->token->line, parser->token->column, message);
 }
 
-// --- ClassDecl ---
+
 Node *parse_ClassDecl(ParserLL1 *parser) {
     parser->symbolTable = createSymbolTable(NULL);
     parser->classObject = createItem();
@@ -194,7 +193,6 @@ Node *parse_MembDecl(ParserLL1 *parser) {
         syntax_error(parser, expected, 5);
     }
     return NULL;
-}eturn parser->abstractSyntaxTree;
 }
 
 
